@@ -14,6 +14,7 @@ namespace MastersGame.Gameplay
         [SerializeField] private SentisLocalLanguageModel sentisModel;
         [SerializeField] private StubLocalLanguageModel stubModel;
         [SerializeField] private int maxVisibleHistory = 12;
+        [SerializeField] private bool enableDebugLogging = true;
 
         private readonly List<ChatMessage> history = new();
 
@@ -114,6 +115,7 @@ namespace MastersGame.Gameplay
             isBusy = true;
             generationCancellation = new CancellationTokenSource();
             var languageModel = GetModel();
+            LogDebug($"Sending message to {currentNpc.NpcName} via {languageModel.DisplayName}: {trimmedMessage}");
             chatWindow.SetBusy(true, $"Generating via {languageModel.DisplayName}...");
 
             try
@@ -125,6 +127,7 @@ namespace MastersGame.Gameplay
                     return;
                 }
 
+                LogDebug($"Reply from {languageModel.DisplayName}: {reply}");
                 AddNpcMessage(reply);
                 chatWindow.SetBusy(false, languageModel.StatusSummary);
                 chatWindow.FocusInput();
@@ -195,6 +198,16 @@ namespace MastersGame.Gameplay
             generationCancellation.Cancel();
             generationCancellation.Dispose();
             generationCancellation = null;
+        }
+
+        private void LogDebug(string message)
+        {
+            if (!enableDebugLogging)
+            {
+                return;
+            }
+
+            Debug.Log($"[NpcChatGameManager] {message}");
         }
     }
 }

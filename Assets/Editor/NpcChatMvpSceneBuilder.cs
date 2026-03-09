@@ -3,6 +3,7 @@ using System.Linq;
 using MastersGame.AI;
 using MastersGame.Gameplay;
 using MastersGame.UI;
+using Unity.InferenceEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -17,6 +18,14 @@ namespace MastersGame.Editor
     public static class NpcChatMvpSceneBuilder
     {
         private const string ScenePath = "Assets/Scenes/NpcChatMvp.unity";
+        private static readonly string[] PreferredFontNames =
+        {
+            "Noto Sans",
+            "Noto Sans CJK JP",
+            "DejaVu Sans",
+            "Liberation Sans",
+            "Arial"
+        };
 
         private sealed class PlayerBundle
         {
@@ -33,6 +42,8 @@ namespace MastersGame.Editor
         [MenuItem("Tools/LLM Chat/Create MVP Scene")]
         public static void CreateMvpScene()
         {
+            EnsureScenesFolderExists();
+
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             var actionAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
@@ -49,6 +60,8 @@ namespace MastersGame.Editor
             var gameManager = systems.AddComponent<NpcChatGameManager>();
             var sentisModel = systems.AddComponent<SentisLocalLanguageModel>();
             var stubModel = systems.AddComponent<StubLocalLanguageModel>();
+            sentisModel.modelAsset = AssetDatabase.LoadAssetAtPath<ModelAsset>("Assets/Models/Qwen/model.onnx");
+            sentisModel.tokenizerJson = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Models/Qwen/tokenizer.json");
 
             var chatBundle = CreateUi();
             var player = CreatePlayer(actionAsset);
@@ -58,12 +71,29 @@ namespace MastersGame.Editor
             player.Interaction.Configure(gameManager, chatBundle.Prompt);
 
             Selection.activeGameObject = npc.gameObject;
-            EditorSceneManager.SaveScene(scene, ScenePath);
+            var saveSucceeded = EditorSceneManager.SaveScene(scene, ScenePath);
+            if (!saveSucceeded)
+            {
+                EditorUtility.DisplayDialog("Scene Save Failed", $"Unity did not save the MVP scene to {ScenePath}.", "OK");
+                return;
+            }
+
             EnsureSceneInBuildSettings(ScenePath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
 
             EditorUtility.DisplayDialog("MVP Scene Created", $"Scene saved to {ScenePath}. Open it and press Play to test the player, NPC and chat flow.", "OK");
+        }
+
+        private static void EnsureScenesFolderExists()
+        {
+            if (AssetDatabase.IsValidFolder("Assets/Scenes"))
+            {
+                return;
+            }
+
+            AssetDatabase.CreateFolder("Assets", "Scenes");
         }
 
         private static void CreateEnvironment()
@@ -112,6 +142,7 @@ namespace MastersGame.Editor
             playerInput.actions = actionAsset;
             playerInput.defaultActionMap = "Player";
             playerInput.neverAutoSwitchControlSchemes = true;
+            playerInput.notificationBehavior = PlayerNotifications.InvokeCSharpEvents;
 
             var movement = root.AddComponent<PlayerController3D>();
             var interaction = root.AddComponent<PlayerInteractionController>();
@@ -172,7 +203,7 @@ namespace MastersGame.Editor
 
         private static ChatBundle CreateUi()
         {
-            var font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            var font = ResolveUiFont();
 
             var chatCanvasObject = new GameObject("ChatCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var chatCanvas = chatCanvasObject.GetComponent<Canvas>();
@@ -379,6 +410,17 @@ namespace MastersGame.Editor
             text.text = objectName;
             text.color = Color.white;
             return text;
+        }
+
+        private static Font ResolveUiFont()
+        {
+            var osFont = Font.CreateDynamicFontFromOSFont(PreferredFontNames, 16);
+            if (osFont != null)
+            {
+                return osFont;
+            }
+
+            return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         }
 
         private static GameObject CreateButton(string objectName, Transform parent, Font font, string buttonLabel)

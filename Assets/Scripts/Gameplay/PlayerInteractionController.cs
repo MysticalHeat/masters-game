@@ -72,7 +72,22 @@ namespace MastersGame.Gameplay
             }
         }
 
+        public void OnInteract(InputValue value)
+        {
+            if (value == null || !value.isPressed)
+            {
+                return;
+            }
+
+            TryOpenConversation();
+        }
+
         private void OnInteract(InputAction.CallbackContext _)
+        {
+            TryOpenConversation();
+        }
+
+        private void TryOpenConversation()
         {
             if (gameManager == null || gameManager.ChatOpen || currentTarget == null)
             {
