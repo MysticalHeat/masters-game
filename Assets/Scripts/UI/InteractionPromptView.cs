@@ -1,13 +1,13 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MastersGame.UI
 {
     public class InteractionPromptView : MonoBehaviour
     {
-        [SerializeField] private Text label;
+        [SerializeField] private TextMeshProUGUI label;
 
-        public void Configure(Text promptLabel)
+        public void Configure(TextMeshProUGUI promptLabel)
         {
             label = promptLabel;
         }

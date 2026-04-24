@@ -3,6 +3,7 @@ using System.Linq;
 using MastersGame.AI;
 using MastersGame.Gameplay;
 using MastersGame.UI;
+using TMPro;
 using Unity.InferenceEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -18,14 +19,6 @@ namespace MastersGame.Editor
     public static class NpcChatMvpSceneBuilder
     {
         private const string ScenePath = "Assets/Scenes/NpcChatMvp.unity";
-        private static readonly string[] PreferredFontNames =
-        {
-            "Noto Sans",
-            "Noto Sans CJK JP",
-            "DejaVu Sans",
-            "Liberation Sans",
-            "Arial"
-        };
 
         private sealed class PlayerBundle
         {
@@ -203,118 +196,125 @@ namespace MastersGame.Editor
 
         private static ChatBundle CreateUi()
         {
-            var font = ResolveUiFont();
-
             var chatCanvasObject = new GameObject("ChatCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var chatCanvas = chatCanvasObject.GetComponent<Canvas>();
             chatCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            chatCanvas.sortingOrder = 10;
             var scaler = chatCanvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920f, 1080f);
 
             var panel = CreateUiObject("ChatPanel", chatCanvasObject.transform);
-            panel.gameObject.AddComponent<Image>().color = new Color(0.06f, 0.08f, 0.12f, 0.92f);
+            panel.gameObject.AddComponent<Image>().color = new Color(0.07f, 0.08f, 0.12f, 0.96f);
             var panelRect = panel.GetComponent<RectTransform>();
-            panelRect.anchorMin = new Vector2(0.18f, 0.08f);
-            panelRect.anchorMax = new Vector2(0.82f, 0.58f);
+            panelRect.anchorMin = new Vector2(0.18f, 0.05f);
+            panelRect.anchorMax = new Vector2(0.82f, 0.62f);
             panelRect.offsetMin = Vector2.zero;
             panelRect.offsetMax = Vector2.zero;
 
             var chatWindow = panel.gameObject.AddComponent<ChatWindowController>();
 
-            var header = CreateText("Header", panel, font, 28, TextAnchor.MiddleLeft, FontStyle.Bold);
-            var headerRect = header.rectTransform;
-            headerRect.anchorMin = new Vector2(0f, 1f);
-            headerRect.anchorMax = new Vector2(1f, 1f);
-            headerRect.pivot = new Vector2(0.5f, 1f);
-            headerRect.sizeDelta = new Vector2(0f, 42f);
-            headerRect.anchoredPosition = new Vector2(0f, -16f);
-            header.color = Color.white;
+            var headerBar = CreateUiObject("HeaderBar", panel);
+            headerBar.gameObject.AddComponent<Image>().color = new Color(0.09f, 0.11f, 0.16f, 1f);
+            var headerBarRect = headerBar.GetComponent<RectTransform>();
+            headerBarRect.anchorMin = new Vector2(0f, 1f);
+            headerBarRect.anchorMax = new Vector2(1f, 1f);
+            headerBarRect.pivot = new Vector2(0.5f, 1f);
+            headerBarRect.sizeDelta = new Vector2(0f, 56f);
 
-            var status = CreateText("Status", panel, font, 16, TextAnchor.MiddleLeft, FontStyle.Normal);
+            var title = CreateTmpText("Title", headerBar, 22, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            var titleRect = title.rectTransform;
+            titleRect.anchorMin = new Vector2(0f, 0.5f);
+            titleRect.anchorMax = new Vector2(0.8f, 1f);
+            titleRect.offsetMin = new Vector2(18f, 0f);
+            titleRect.offsetMax = new Vector2(0f, -4f);
+            title.color = Color.white;
+
+            var status = CreateTmpText("Status", headerBar, 12, TextAlignmentOptions.MidlineLeft, FontStyles.Normal);
             var statusRect = status.rectTransform;
-            statusRect.anchorMin = new Vector2(0f, 1f);
-            statusRect.anchorMax = new Vector2(1f, 1f);
-            statusRect.pivot = new Vector2(0.5f, 1f);
-            statusRect.sizeDelta = new Vector2(0f, 30f);
-            statusRect.anchoredPosition = new Vector2(0f, -58f);
-            status.color = new Color(0.75f, 0.82f, 0.89f);
+            statusRect.anchorMin = new Vector2(0f, 0f);
+            statusRect.anchorMax = new Vector2(0.8f, 0.5f);
+            statusRect.offsetMin = new Vector2(18f, 4f);
+            statusRect.offsetMax = Vector2.zero;
+            status.color = new Color(0.55f, 0.63f, 0.72f);
+
+            var closeButton = CreateTmpButton("CloseButton", headerBar, "\u2715", new Color(0.50f, 0.15f, 0.18f, 0.95f));
+            var closeRect = closeButton.GetComponent<RectTransform>();
+            closeRect.anchorMin = new Vector2(1f, 0.1f);
+            closeRect.anchorMax = new Vector2(1f, 0.9f);
+            closeRect.pivot = new Vector2(1f, 0.5f);
+            closeRect.sizeDelta = new Vector2(50f, 0f);
+            closeRect.anchoredPosition = new Vector2(-6f, 0f);
 
             var scrollRoot = CreateUiObject("ScrollView", panel);
-            scrollRoot.gameObject.AddComponent<Image>().color = new Color(0.11f, 0.14f, 0.18f, 0.85f);
-            var scrollRectTransform = scrollRoot.GetComponent<RectTransform>();
-            scrollRectTransform.anchorMin = new Vector2(0.03f, 0.22f);
-            scrollRectTransform.anchorMax = new Vector2(0.97f, 0.78f);
-            scrollRectTransform.offsetMin = Vector2.zero;
-            scrollRectTransform.offsetMax = Vector2.zero;
+            scrollRoot.gameObject.AddComponent<Image>().color = new Color(0.05f, 0.06f, 0.09f, 0.90f);
+            var scrollRootRect = scrollRoot.GetComponent<RectTransform>();
+            scrollRootRect.anchorMin = new Vector2(0f, 0f);
+            scrollRootRect.anchorMax = new Vector2(1f, 1f);
+            scrollRootRect.offsetMin = new Vector2(0f, 52f);
+            scrollRootRect.offsetMax = new Vector2(0f, -56f);
 
             var viewport = CreateUiObject("Viewport", scrollRoot);
-            var viewportImage = viewport.gameObject.AddComponent<Image>();
-            viewportImage.color = new Color(0f, 0f, 0f, 0.001f);
-            viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+            viewport.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.001f);
+            viewport.gameObject.AddComponent<RectMask2D>();
             var viewportRect = viewport.GetComponent<RectTransform>();
             viewportRect.anchorMin = Vector2.zero;
             viewportRect.anchorMax = Vector2.one;
-            viewportRect.offsetMin = new Vector2(12f, 12f);
-            viewportRect.offsetMax = new Vector2(-12f, -12f);
+            viewportRect.offsetMin = new Vector2(8f, 8f);
+            viewportRect.offsetMax = new Vector2(-8f, -8f);
 
             var content = CreateUiObject("Content", viewport);
             var contentRect = content.GetComponent<RectTransform>();
             contentRect.anchorMin = new Vector2(0f, 1f);
             contentRect.anchorMax = new Vector2(1f, 1f);
             contentRect.pivot = new Vector2(0.5f, 1f);
-            contentRect.anchoredPosition = Vector2.zero;
             contentRect.sizeDelta = new Vector2(0f, 0f);
 
-            var layout = content.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = 10f;
-            layout.padding = new RectOffset(8, 8, 8, 8);
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandHeight = false;
-            layout.childForceExpandWidth = true;
+            var contentLayout = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            contentLayout.spacing = 8f;
+            contentLayout.padding = new RectOffset(6, 6, 6, 6);
+            contentLayout.childControlWidth = true;
+            contentLayout.childControlHeight = true;
+            contentLayout.childForceExpandHeight = false;
+            contentLayout.childForceExpandWidth = true;
 
-            var contentSizeFitter = content.gameObject.AddComponent<ContentSizeFitter>();
-            contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            var contentFitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            contentFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
 
             var scrollRect = scrollRoot.gameObject.AddComponent<ScrollRect>();
             scrollRect.viewport = viewportRect;
             scrollRect.content = contentRect;
             scrollRect.horizontal = false;
+            scrollRect.scrollSensitivity = 30f;
 
-            var messageTemplate = CreateText("MessageTemplate", content, font, 18, TextAnchor.UpperLeft, FontStyle.Normal);
-            messageTemplate.horizontalOverflow = HorizontalWrapMode.Wrap;
-            messageTemplate.verticalOverflow = VerticalWrapMode.Overflow;
-            messageTemplate.color = Color.white;
-            var messageFitter = messageTemplate.gameObject.AddComponent<ContentSizeFitter>();
-            messageFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            messageFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            messageTemplate.gameObject.SetActive(false);
+            var inputBar = CreateUiObject("InputBar", panel);
+            inputBar.gameObject.AddComponent<Image>().color = new Color(0.09f, 0.10f, 0.15f, 1f);
+            var inputBarRect = inputBar.GetComponent<RectTransform>();
+            inputBarRect.anchorMin = new Vector2(0f, 0f);
+            inputBarRect.anchorMax = new Vector2(1f, 0f);
+            inputBarRect.pivot = new Vector2(0.5f, 0f);
+            inputBarRect.sizeDelta = new Vector2(0f, 52f);
 
-            var inputRoot = CreateUiObject("InputRoot", panel);
-            var inputRootRect = inputRoot.GetComponent<RectTransform>();
-            inputRootRect.anchorMin = new Vector2(0.03f, 0.04f);
-            inputRootRect.anchorMax = new Vector2(0.74f, 0.16f);
-            inputRootRect.offsetMin = Vector2.zero;
-            inputRootRect.offsetMax = Vector2.zero;
+            var inputBarLayout = inputBar.gameObject.AddComponent<HorizontalLayoutGroup>();
+            inputBarLayout.spacing = 6f;
+            inputBarLayout.padding = new RectOffset(10, 10, 8, 8);
+            inputBarLayout.childControlWidth = true;
+            inputBarLayout.childControlHeight = true;
+            inputBarLayout.childForceExpandWidth = false;
+            inputBarLayout.childForceExpandHeight = true;
 
-            var inputField = CreateInputField(inputRoot, font);
-            var sendButton = CreateButton("SendButton", panel, font, "Send");
-            var sendRect = sendButton.GetComponent<RectTransform>();
-            sendRect.anchorMin = new Vector2(0.77f, 0.04f);
-            sendRect.anchorMax = new Vector2(0.87f, 0.16f);
-            sendRect.offsetMin = Vector2.zero;
-            sendRect.offsetMax = Vector2.zero;
+            var inputField = CreateTmpInputField(inputBar);
+            var inputFieldElement = inputField.gameObject.AddComponent<LayoutElement>();
+            inputFieldElement.flexibleWidth = 1f;
+            inputFieldElement.minWidth = 100f;
 
-            var closeButton = CreateButton("CloseButton", panel, font, "Close");
-            var closeRect = closeButton.GetComponent<RectTransform>();
-            closeRect.anchorMin = new Vector2(0.88f, 0.04f);
-            closeRect.anchorMax = new Vector2(0.98f, 0.16f);
-            closeRect.offsetMin = Vector2.zero;
-            closeRect.offsetMax = Vector2.zero;
+            var sendButton = CreateTmpButton("SendButton", inputBar, "Send", new Color(0.20f, 0.45f, 0.65f, 1f));
+            var sendElement = sendButton.gameObject.AddComponent<LayoutElement>();
+            sendElement.preferredWidth = 72f;
+            sendElement.flexibleWidth = 0f;
 
-            chatWindow.Configure(header, status, scrollRect, contentRect, messageTemplate, inputField, sendButton.GetComponent<Button>(), closeButton.GetComponent<Button>());
+            chatWindow.Configure(title, status, scrollRect, contentRect, inputField, sendButton, closeButton);
             panel.gameObject.SetActive(false);
 
             var promptCanvasObject = new GameObject("PromptCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -325,19 +325,19 @@ namespace MastersGame.Editor
             promptScaler.referenceResolution = new Vector2(1920f, 1080f);
 
             var promptRoot = CreateUiObject("Prompt", promptCanvasObject.transform);
-            promptRoot.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.65f);
+            promptRoot.gameObject.AddComponent<Image>().color = new Color(0.06f, 0.07f, 0.10f, 0.82f);
             var promptRect = promptRoot.GetComponent<RectTransform>();
             promptRect.anchorMin = new Vector2(0.35f, 0.03f);
-            promptRect.anchorMax = new Vector2(0.65f, 0.09f);
+            promptRect.anchorMax = new Vector2(0.65f, 0.08f);
             promptRect.offsetMin = Vector2.zero;
             promptRect.offsetMax = Vector2.zero;
 
-            var promptLabel = CreateText("PromptLabel", promptRoot, font, 20, TextAnchor.MiddleCenter, FontStyle.Bold);
+            var promptLabel = CreateTmpText("PromptLabel", promptRoot, 17, TextAlignmentOptions.Center, FontStyles.Bold);
             promptLabel.rectTransform.anchorMin = Vector2.zero;
             promptLabel.rectTransform.anchorMax = Vector2.one;
             promptLabel.rectTransform.offsetMin = Vector2.zero;
             promptLabel.rectTransform.offsetMax = Vector2.zero;
-            promptLabel.color = Color.white;
+            promptLabel.color = new Color(0.90f, 0.93f, 1f);
 
             var promptView = promptRoot.gameObject.AddComponent<InteractionPromptView>();
             promptView.Configure(promptLabel);
@@ -398,71 +398,93 @@ namespace MastersGame.Editor
             return rectTransform;
         }
 
-        private static Text CreateText(string objectName, Transform parent, Font font, int fontSize, TextAnchor alignment, FontStyle fontStyle)
+        private static TextMeshProUGUI CreateTmpText(string objectName, Transform parent, int fontSize, TextAlignmentOptions alignment, FontStyles fontStyle)
         {
             var textObject = CreateUiObject(objectName, parent);
-            var text = textObject.gameObject.AddComponent<Text>();
-            text.font = font;
+            var text = textObject.gameObject.AddComponent<TextMeshProUGUI>();
             text.fontSize = fontSize;
             text.alignment = alignment;
             text.fontStyle = fontStyle;
-            text.supportRichText = false;
-            text.text = objectName;
             text.color = Color.white;
+            text.text = objectName;
             return text;
         }
 
-        private static Font ResolveUiFont()
-        {
-            var osFont = Font.CreateDynamicFontFromOSFont(PreferredFontNames, 16);
-            if (osFont != null)
-            {
-                return osFont;
-            }
-
-            return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        }
-
-        private static GameObject CreateButton(string objectName, Transform parent, Font font, string buttonLabel)
+        private static Button CreateTmpButton(string objectName, Transform parent, string label, Color backgroundColor)
         {
             var buttonObject = CreateUiObject(objectName, parent).gameObject;
             var image = buttonObject.AddComponent<Image>();
-            image.color = new Color(0.17f, 0.31f, 0.41f, 0.95f);
-            buttonObject.AddComponent<Button>();
+            image.color = backgroundColor;
+            var button = buttonObject.AddComponent<Button>();
 
-            var label = CreateText("Label", buttonObject.transform, font, 18, TextAnchor.MiddleCenter, FontStyle.Bold);
-            label.text = buttonLabel;
-            label.rectTransform.anchorMin = Vector2.zero;
-            label.rectTransform.anchorMax = Vector2.one;
-            label.rectTransform.offsetMin = Vector2.zero;
-            label.rectTransform.offsetMax = Vector2.zero;
+            var labelObj = CreateUiObject("Label", buttonObject.transform);
+            var labelRect = labelObj.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = Vector2.zero;
+            labelRect.offsetMax = Vector2.zero;
 
-            return buttonObject;
+            var labelText = labelObj.gameObject.AddComponent<TextMeshProUGUI>();
+            labelText.text = label;
+            labelText.fontSize = 15;
+            labelText.fontStyle = FontStyles.Bold;
+            labelText.color = Color.white;
+            labelText.alignment = TextAlignmentOptions.Center;
+
+            return button;
         }
 
-        private static InputField CreateInputField(Transform parent, Font font)
+        private static TMP_InputField CreateTmpInputField(Transform parent)
         {
             var inputObject = CreateUiObject("InputField", parent).gameObject;
             var background = inputObject.AddComponent<Image>();
-            background.color = new Color(0.14f, 0.17f, 0.22f, 0.98f);
-            var inputField = inputObject.AddComponent<InputField>();
-            inputField.lineType = InputField.LineType.SingleLine;
-            inputField.textComponent = CreateText("Text", inputObject.transform, font, 18, TextAnchor.MiddleLeft, FontStyle.Normal);
-            inputField.textComponent.rectTransform.anchorMin = Vector2.zero;
-            inputField.textComponent.rectTransform.anchorMax = Vector2.one;
-            inputField.textComponent.rectTransform.offsetMin = new Vector2(14f, 6f);
-            inputField.textComponent.rectTransform.offsetMax = new Vector2(-14f, -7f);
-            inputField.textComponent.color = Color.white;
-            inputField.textComponent.text = string.Empty;
+            background.color = new Color(0.14f, 0.16f, 0.22f, 1f);
 
-            var placeholder = CreateText("Placeholder", inputObject.transform, font, 18, TextAnchor.MiddleLeft, FontStyle.Italic);
-            placeholder.rectTransform.anchorMin = Vector2.zero;
-            placeholder.rectTransform.anchorMax = Vector2.one;
-            placeholder.rectTransform.offsetMin = new Vector2(14f, 6f);
-            placeholder.rectTransform.offsetMax = new Vector2(-14f, -7f);
-            placeholder.text = "Ask the NPC something...";
-            placeholder.color = new Color(1f, 1f, 1f, 0.35f);
-            inputField.placeholder = placeholder;
+            var inputField = inputObject.AddComponent<TMP_InputField>();
+
+            var textArea = CreateUiObject("Text Area", inputObject.transform);
+            textArea.gameObject.AddComponent<RectMask2D>();
+            var textAreaRect = textArea.GetComponent<RectTransform>();
+            textAreaRect.anchorMin = Vector2.zero;
+            textAreaRect.anchorMax = Vector2.one;
+            textAreaRect.offsetMin = new Vector2(10f, 0f);
+            textAreaRect.offsetMax = new Vector2(-10f, 0f);
+
+            var placeholder = CreateUiObject("Placeholder", textArea);
+            var placeholderRect = placeholder.GetComponent<RectTransform>();
+            placeholderRect.anchorMin = Vector2.zero;
+            placeholderRect.anchorMax = Vector2.one;
+            placeholderRect.offsetMin = Vector2.zero;
+            placeholderRect.offsetMax = Vector2.zero;
+
+            var placeholderText = placeholder.gameObject.AddComponent<TextMeshProUGUI>();
+            placeholderText.text = "Type a message...";
+            placeholderText.fontSize = 15;
+            placeholderText.fontStyle = FontStyles.Italic;
+            placeholderText.color = new Color(1f, 1f, 1f, 0.35f);
+            placeholderText.textWrappingMode = TextWrappingModes.NoWrap;
+            placeholderText.alignment = TextAlignmentOptions.MidlineLeft;
+
+            var textObj = CreateUiObject("Text", textArea);
+            var textRect = textObj.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            var text = textObj.gameObject.AddComponent<TextMeshProUGUI>();
+            text.text = string.Empty;
+            text.fontSize = 15;
+            text.color = Color.white;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.alignment = TextAlignmentOptions.MidlineLeft;
+
+            inputField.textViewport = textAreaRect;
+            inputField.textComponent = text;
+            inputField.placeholder = placeholderText;
+            inputField.lineType = TMP_InputField.LineType.SingleLine;
+            inputField.caretColor = Color.white;
+            inputField.selectionColor = new Color(0.25f, 0.45f, 0.65f, 0.45f);
 
             return inputField;
         }

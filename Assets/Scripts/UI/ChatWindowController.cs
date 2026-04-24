@@ -1,6 +1,6 @@
 using System;
-using System.Text;
 using MastersGame.AI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -10,43 +10,47 @@ namespace MastersGame.UI
 {
     public class ChatWindowController : MonoBehaviour
     {
-        private static readonly string[] PreferredFontNames =
-        {
-            "Noto Sans",
-            "Noto Sans CJK JP",
-            "DejaVu Sans",
-            "Liberation Sans",
-            "Arial"
-        };
-
-        private static Font cachedUnicodeFont;
-
-        [SerializeField] private Text titleLabel;
-        [SerializeField] private Text statusLabel;
+        [Header("References")]
+        [SerializeField] private TextMeshProUGUI titleLabel;
+        [SerializeField] private TextMeshProUGUI statusLabel;
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private RectTransform messageContainer;
-        [SerializeField] private Text messageTemplate;
-        [SerializeField] private InputField inputField;
+        [SerializeField] private TMP_InputField inputField;
         [SerializeField] private Button sendButton;
         [SerializeField] private Button closeButton;
-        [SerializeField] private bool useUnicodeFallbackFont = true;
-        [SerializeField] private bool enableDebugLogging = true;
-        [SerializeField] private bool useTranscriptMode = true;
 
-        private readonly StringBuilder transcriptBuilder = new();
-        private Text transcriptText;
+        [Header("Bubble Style")]
+        [SerializeField] private Color playerBubbleColor = new Color(0.17f, 0.36f, 0.56f, 0.95f);
+        [SerializeField] private Color npcBubbleColor = new Color(0.19f, 0.20f, 0.26f, 0.95f);
+        [SerializeField] private Color systemBubbleColor = new Color(0.14f, 0.24f, 0.18f, 0.95f);
+        [SerializeField] private Color playerTextColor = Color.white;
+        [SerializeField] private Color npcTextColor = new Color(0.94f, 0.92f, 0.87f);
+        [SerializeField] private Color systemTextColor = new Color(0.72f, 0.94f, 0.78f);
+        [SerializeField] private Color authorLabelColor = new Color(1f, 1f, 1f, 0.50f);
+        [SerializeField] private float maxBubbleWidthFraction = 0.78f;
+        [SerializeField] private int bodyFontSize = 16;
+        [SerializeField] private int authorFontSize = 11;
+
+        [Header("Debug")]
+        [SerializeField] private bool enableDebugLogging = true;
 
         public event Action<string> SendRequested;
 
         public event Action CloseRequested;
 
-        public void Configure(Text title, Text status, ScrollRect messagesScrollRect, RectTransform messagesContainer, Text template, InputField field, Button send, Button close)
+        public void Configure(
+            TextMeshProUGUI title,
+            TextMeshProUGUI status,
+            ScrollRect messagesScrollRect,
+            RectTransform messagesContainer,
+            TMP_InputField field,
+            Button send,
+            Button close)
         {
             titleLabel = title;
             statusLabel = status;
             scrollRect = messagesScrollRect;
             messageContainer = messagesContainer;
-            messageTemplate = template;
             inputField = field;
             sendButton = send;
             closeButton = close;
@@ -54,8 +58,6 @@ namespace MastersGame.UI
 
         private void Awake()
         {
-            ApplyUnicodeFallbackFont();
-            EnsureTranscriptOverlay();
             sendButton.onClick.AddListener(SubmitDraft);
             closeButton.onClick.AddListener(() => CloseRequested?.Invoke());
         }
@@ -108,73 +110,129 @@ namespace MastersGame.UI
 
         public void AppendMessage(ChatRole role, string author, string body)
         {
-            if (messageTemplate == null || messageContainer == null)
+            if (messageContainer == null)
             {
                 return;
             }
 
-            if (useTranscriptMode)
-            {
-                AppendTranscriptMessage(role, author, body);
-                return;
-            }
+            author ??= string.Empty;
+            body ??= string.Empty;
 
-            var entry = Instantiate(messageTemplate, messageContainer);
-            entry.gameObject.SetActive(true);
-            if (useUnicodeFallbackFont)
-            {
-                var fallbackFont = GetUnicodeFallbackFont();
-                if (fallbackFont != null)
-                {
-                    entry.font = fallbackFont;
-                }
-            }
+            var isPlayer = role == ChatRole.Player;
+            const int bubblePaddingLeft = 14;
+            const int bubblePaddingRight = 14;
+            const int bubblePaddingTop = 8;
+            const int bubblePaddingBottom = 10;
+            const float bubbleSpacing = 2f;
 
-            entry.supportRichText = false;
-            entry.horizontalOverflow = HorizontalWrapMode.Wrap;
-            entry.verticalOverflow = VerticalWrapMode.Overflow;
-            entry.text = $"{author}:\n{body}";
-
-            var layoutElement = entry.GetComponent<LayoutElement>();
-            if (layoutElement == null)
-            {
-                layoutElement = entry.gameObject.AddComponent<LayoutElement>();
-            }
-
-            var preferredHeight = Mathf.Max(28f, entry.preferredHeight + 12f);
-            layoutElement.preferredHeight = preferredHeight;
-            layoutElement.flexibleHeight = 0f;
-
-            var rect = entry.rectTransform;
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(1f, 1f);
-            rect.pivot = new Vector2(0.5f, 1f);
-            rect.sizeDelta = new Vector2(0f, preferredHeight);
+            Color bubbleColor;
+            Color textColor;
 
             switch (role)
             {
                 case ChatRole.Player:
-                    entry.alignment = TextAnchor.UpperRight;
-                    entry.color = new Color(0.87f, 0.95f, 1f);
+                    bubbleColor = playerBubbleColor;
+                    textColor = playerTextColor;
                     break;
                 case ChatRole.Npc:
-                    entry.alignment = TextAnchor.UpperLeft;
-                    entry.color = new Color(1f, 0.93f, 0.8f);
+                    bubbleColor = npcBubbleColor;
+                    textColor = npcTextColor;
                     break;
                 default:
-                    entry.alignment = TextAnchor.UpperLeft;
-                    entry.color = new Color(0.8f, 1f, 0.82f);
+                    bubbleColor = systemBubbleColor;
+                    textColor = systemTextColor;
                     break;
             }
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
+            var row = CreateChild("MessageRow", messageContainer);
+            var rowLayout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            rowLayout.childControlWidth = true;
+            rowLayout.childControlHeight = true;
+            rowLayout.childForceExpandWidth = false;
+            rowLayout.childForceExpandHeight = false;
+            rowLayout.spacing = 0f;
+
+            var rowElement = row.gameObject.AddComponent<LayoutElement>();
+            rowElement.flexibleWidth = 1f;
+
+            if (isPlayer)
+            {
+                AddFlexSpacer(row);
+            }
+
+            var bubble = CreateChild("Bubble", row);
+            var bubbleImage = bubble.gameObject.AddComponent<Image>();
+            bubbleImage.color = bubbleColor;
+
+            var bubbleLayout = bubble.gameObject.AddComponent<VerticalLayoutGroup>();
+            bubbleLayout.padding = new RectOffset(bubblePaddingLeft, bubblePaddingRight, bubblePaddingTop, bubblePaddingBottom);
+            bubbleLayout.spacing = bubbleSpacing;
+            bubbleLayout.childControlWidth = true;
+            bubbleLayout.childControlHeight = true;
+            bubbleLayout.childForceExpandWidth = true;
+            bubbleLayout.childForceExpandHeight = false;
+
+            var maxBubbleWidth = ComputeMaxBubbleWidth();
+            var bubbleElement = bubble.gameObject.AddComponent<LayoutElement>();
+            bubbleElement.preferredWidth = maxBubbleWidth;
+            bubbleElement.flexibleWidth = 0f;
+
+            var authorObj = CreateChild("Author", bubble);
+            var authorTmp = authorObj.gameObject.AddComponent<TextMeshProUGUI>();
+            authorTmp.text = author;
+            authorTmp.fontSize = authorFontSize;
+            authorTmp.fontStyle = FontStyles.Bold;
+            authorTmp.color = authorLabelColor;
+            authorTmp.alignment = isPlayer ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+            authorTmp.textWrappingMode = TextWrappingModes.NoWrap;
+            authorTmp.overflowMode = TextOverflowModes.Ellipsis;
+
+            var authorElement = authorObj.gameObject.AddComponent<LayoutElement>();
+            authorElement.flexibleWidth = 1f;
+
+            var bodyObj = CreateChild("Body", bubble);
+            var bodyTmp = bodyObj.gameObject.AddComponent<TextMeshProUGUI>();
+            bodyTmp.text = body;
+            bodyTmp.fontSize = bodyFontSize;
+            bodyTmp.color = textColor;
+            bodyTmp.alignment = isPlayer ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+            bodyTmp.textWrappingMode = TextWrappingModes.Normal;
+            bodyTmp.overflowMode = TextOverflowModes.Overflow;
+
+            var bodyElement = bodyObj.gameObject.AddComponent<LayoutElement>();
+            bodyElement.flexibleWidth = 1f;
+
+            if (!isPlayer)
+            {
+                AddFlexSpacer(row);
+            }
+
+            authorTmp.ForceMeshUpdate();
+            bodyTmp.ForceMeshUpdate();
+
+            var textWidth = Mathf.Max(1f, maxBubbleWidth - bubblePaddingLeft - bubblePaddingRight);
+            var authorHeight = Mathf.Max(authorTmp.preferredHeight, authorTmp.GetPreferredValues(author, textWidth, 0f).y);
+            var bodyHeight = Mathf.Max(bodyTmp.preferredHeight, bodyTmp.GetPreferredValues(body, textWidth, 0f).y);
+            var bubbleHeight = bubblePaddingTop + authorHeight + bubbleSpacing + bodyHeight + bubblePaddingBottom;
+
+            authorElement.preferredHeight = authorHeight;
+            bodyElement.preferredHeight = bodyHeight;
+            bubbleElement.preferredHeight = bubbleHeight;
+            rowElement.preferredHeight = bubbleHeight;
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(row);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(bubble);
             LayoutRebuilder.ForceRebuildLayoutImmediate(messageContainer);
             Canvas.ForceUpdateCanvases();
-            scrollRect.verticalNormalizedPosition = 0f;
+
+            if (scrollRect != null)
+            {
+                scrollRect.verticalNormalizedPosition = 0f;
+            }
 
             if (enableDebugLogging)
             {
-                Debug.Log($"[ChatWindowController] Appended {role} message. Author='{author}' BodyLength={body?.Length ?? 0} PreferredHeight={preferredHeight} Font='{entry.font?.name}'");
+                Debug.Log($"[ChatWindowController] Appended {role} bubble. Author='{author}' BodyLength={body?.Length ?? 0}");
             }
         }
 
@@ -208,170 +266,40 @@ namespace MastersGame.UI
 
         private void ClearMessages()
         {
-            if (messageContainer == null || messageTemplate == null)
+            if (messageContainer == null)
             {
                 return;
-            }
-
-            transcriptBuilder.Clear();
-            if (transcriptText != null)
-            {
-                transcriptText.text = string.Empty;
             }
 
             for (var index = messageContainer.childCount - 1; index >= 0; index--)
             {
-                var child = messageContainer.GetChild(index);
-                if (child == messageTemplate.transform)
-                {
-                    continue;
-                }
-
-                Destroy(child.gameObject);
-            }
-
-            messageTemplate.gameObject.SetActive(false);
-        }
-
-        private void AppendTranscriptMessage(ChatRole role, string author, string body)
-        {
-            EnsureTranscriptOverlay();
-
-            if (useUnicodeFallbackFont)
-            {
-                var fallbackFont = GetUnicodeFallbackFont();
-                if (fallbackFont != null)
-                {
-                    messageTemplate.font = fallbackFont;
-                    if (transcriptText != null)
-                    {
-                        transcriptText.font = fallbackFont;
-                    }
-                }
-            }
-
-            if (transcriptBuilder.Length > 0)
-            {
-                transcriptBuilder.Append("\n\n");
-            }
-
-            transcriptBuilder.Append(author);
-            transcriptBuilder.Append(':');
-            transcriptBuilder.Append('\n');
-            transcriptBuilder.Append(body);
-
-            transcriptText.gameObject.SetActive(true);
-            transcriptText.supportRichText = false;
-            transcriptText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            transcriptText.verticalOverflow = VerticalWrapMode.Overflow;
-            transcriptText.alignment = TextAnchor.UpperLeft;
-            transcriptText.color = Color.white;
-            transcriptText.text = transcriptBuilder.ToString();
-
-            var rect = transcriptText.rectTransform;
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(1f, 1f);
-            rect.pivot = new Vector2(0.5f, 1f);
-            rect.sizeDelta = new Vector2(0f, Mathf.Max(120f, transcriptText.preferredHeight + 24f));
-
-            LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
-            if (scrollRect != null && scrollRect.content != null)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
-            }
-            Canvas.ForceUpdateCanvases();
-            if (scrollRect != null)
-            {
-                scrollRect.verticalNormalizedPosition = 0f;
-            }
-
-            if (enableDebugLogging)
-            {
-                Debug.Log($"[ChatWindowController] Transcript updated for {role}. TotalLength={transcriptBuilder.Length} Font='{transcriptText.font?.name}'");
+                Destroy(messageContainer.GetChild(index).gameObject);
             }
         }
 
-        private void EnsureTranscriptOverlay()
+        private float ComputeMaxBubbleWidth()
         {
-            if (!useTranscriptMode || transcriptText != null)
+            if (messageContainer != null && messageContainer.rect.width > 10f)
             {
-                return;
+                return messageContainer.rect.width * maxBubbleWidthFraction;
             }
 
-            if (scrollRect != null)
-            {
-                scrollRect.gameObject.SetActive(false);
-            }
-
-            if (messageTemplate != null)
-            {
-                messageTemplate.gameObject.SetActive(false);
-            }
-
-            var transcriptObject = new GameObject("TranscriptOverlay", typeof(RectTransform));
-            var transcriptRect = transcriptObject.GetComponent<RectTransform>();
-            transcriptRect.SetParent(transform, false);
-            transcriptRect.anchorMin = new Vector2(0.03f, 0.22f);
-            transcriptRect.anchorMax = new Vector2(0.97f, 0.78f);
-            transcriptRect.offsetMin = Vector2.zero;
-            transcriptRect.offsetMax = Vector2.zero;
-
-            var background = transcriptObject.AddComponent<Image>();
-            background.color = new Color(0.11f, 0.14f, 0.18f, 0.85f);
-
-            var textObject = new GameObject("TranscriptText", typeof(RectTransform));
-            var textRect = textObject.GetComponent<RectTransform>();
-            textRect.SetParent(transcriptRect, false);
-            textRect.anchorMin = new Vector2(0f, 0f);
-            textRect.anchorMax = new Vector2(1f, 1f);
-            textRect.offsetMin = new Vector2(16f, 16f);
-            textRect.offsetMax = new Vector2(-16f, -16f);
-
-            transcriptText = textObject.AddComponent<Text>();
-            transcriptText.supportRichText = false;
-            transcriptText.font = GetUnicodeFallbackFont() ?? (messageTemplate != null ? messageTemplate.font : null);
-            transcriptText.fontSize = messageTemplate != null ? messageTemplate.fontSize : 18;
-            transcriptText.fontStyle = FontStyle.Normal;
-            transcriptText.alignment = TextAnchor.UpperLeft;
-            transcriptText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            transcriptText.verticalOverflow = VerticalWrapMode.Overflow;
-            transcriptText.color = Color.white;
-            transcriptText.text = string.Empty;
+            return 420f;
         }
 
-        private void ApplyUnicodeFallbackFont()
+        private static RectTransform CreateChild(string objectName, Transform parent)
         {
-            if (!useUnicodeFallbackFont)
-            {
-                return;
-            }
-
-            var fallbackFont = GetUnicodeFallbackFont();
-            if (fallbackFont == null)
-            {
-                return;
-            }
-
-            foreach (var text in GetComponentsInChildren<Text>(true))
-            {
-                text.font = fallbackFont;
-            }
+            var child = new GameObject(objectName, typeof(RectTransform));
+            var rect = child.GetComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            return rect;
         }
 
-        private static Font GetUnicodeFallbackFont()
+        private static void AddFlexSpacer(Transform parent)
         {
-            if (cachedUnicodeFont != null)
-            {
-                return cachedUnicodeFont;
-            }
-
-            cachedUnicodeFont = Font.CreateDynamicFontFromOSFont(PreferredFontNames, 16);
-            if (cachedUnicodeFont == null)
-            {
-                Debug.LogWarning("[ChatWindowController] Failed to create Unicode fallback font from OS fonts.");
-            }
-
-            return cachedUnicodeFont;
+            var spacer = CreateChild("Spacer", parent);
+            var element = spacer.gameObject.AddComponent<LayoutElement>();
+            element.flexibleWidth = 1f;
         }
     }
 }
