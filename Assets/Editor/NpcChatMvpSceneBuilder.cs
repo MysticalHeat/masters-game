@@ -51,8 +51,10 @@ namespace MastersGame.Editor
 
             var systems = new GameObject("Systems");
             var gameManager = systems.AddComponent<NpcChatGameManager>();
+            var llamaModel = systems.AddComponent<LlamaCppHttpLanguageModel>();
             var sentisModel = systems.AddComponent<SentisLocalLanguageModel>();
             var stubModel = systems.AddComponent<StubLocalLanguageModel>();
+            llamaModel.Configure("http://127.0.0.1:8080", "qwen", true);
             sentisModel.modelAsset = AssetDatabase.LoadAssetAtPath<ModelAsset>("Assets/Models/Qwen/model.onnx");
             sentisModel.tokenizerJson = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Models/Qwen/tokenizer.json");
 
@@ -60,7 +62,7 @@ namespace MastersGame.Editor
             var player = CreatePlayer(actionAsset);
             var npc = CreateNpc();
 
-            gameManager.Configure(player.Controller, chatBundle.Window, sentisModel, stubModel);
+            gameManager.Configure(player.Controller, chatBundle.Window, llamaModel, sentisModel, stubModel);
             player.Interaction.Configure(gameManager, chatBundle.Prompt);
 
             Selection.activeGameObject = npc.gameObject;

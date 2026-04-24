@@ -38,6 +38,11 @@ namespace MastersGame.UI
 
         public event Action CloseRequested;
 
+        private RectTransform streamingMessageRow;
+        private TextMeshProUGUI streamingAuthorLabel;
+        private TextMeshProUGUI streamingBodyLabel;
+        private string streamingAuthor;
+
         public void Configure(
             TextMeshProUGUI title,
             TextMeshProUGUI status,
@@ -236,6 +241,52 @@ namespace MastersGame.UI
             }
         }
 
+        public void BeginStreamingNpcMessage(string author)
+        {
+            CancelStreamingNpcMessage();
+            streamingAuthor = author ?? string.Empty;
+            CreateStreamingBubble(streamingAuthor, string.Empty);
+        }
+
+        public void UpdateStreamingNpcMessage(string body)
+        {
+            if (streamingBodyLabel == null)
+            {
+                return;
+            }
+
+            streamingBodyLabel.text = body ?? string.Empty;
+            RebuildStreamingBubble();
+        }
+
+        public void CompleteStreamingNpcMessage(string finalBody)
+        {
+            UpdateStreamingNpcMessage(finalBody);
+            streamingMessageRow = null;
+            streamingAuthorLabel = null;
+            streamingBodyLabel = null;
+            streamingAuthor = null;
+        }
+
+        public void CancelStreamingNpcMessage(string fallbackBody = null)
+        {
+            if (streamingBodyLabel != null && !string.IsNullOrWhiteSpace(fallbackBody))
+            {
+                streamingBodyLabel.text = fallbackBody;
+                RebuildStreamingBubble();
+            }
+
+            if (streamingMessageRow != null)
+            {
+                Destroy(streamingMessageRow.gameObject);
+            }
+
+            streamingMessageRow = null;
+            streamingAuthorLabel = null;
+            streamingBodyLabel = null;
+            streamingAuthor = null;
+        }
+
         public void FocusInput()
         {
             if (inputField == null)
@@ -274,6 +325,56 @@ namespace MastersGame.UI
             for (var index = messageContainer.childCount - 1; index >= 0; index--)
             {
                 Destroy(messageContainer.GetChild(index).gameObject);
+            }
+        }
+
+        private void CreateStreamingBubble(string author, string body)
+        {
+            var row = CreateChild("StreamingMessageRow", messageContainer);
+            streamingMessageRow = row;
+            var rowLayout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            rowLayout.childControlWidth = true;
+            rowLayout.childControlHeight = true;
+            rowLayout.childForceExpandWidth = false;
+            rowLayout.childForceExpandHeight = false;
+
+            var bubble = CreateChild("Bubble", row);
+            bubble.gameObject.AddComponent<Image>().color = npcBubbleColor;
+            var bubbleLayout = bubble.gameObject.AddComponent<VerticalLayoutGroup>();
+            bubbleLayout.padding = new RectOffset(14, 14, 8, 10);
+            bubbleLayout.spacing = 2f;
+            bubbleLayout.childControlWidth = true;
+            bubbleLayout.childForceExpandWidth = true;
+
+            var authorObj = CreateChild("Author", bubble);
+            streamingAuthorLabel = authorObj.gameObject.AddComponent<TextMeshProUGUI>();
+            streamingAuthorLabel.text = author;
+            streamingAuthorLabel.fontSize = authorFontSize;
+            streamingAuthorLabel.fontStyle = FontStyles.Bold;
+            streamingAuthorLabel.color = authorLabelColor;
+
+            var bodyObj = CreateChild("Body", bubble);
+            streamingBodyLabel = bodyObj.gameObject.AddComponent<TextMeshProUGUI>();
+            streamingBodyLabel.text = body;
+            streamingBodyLabel.fontSize = bodyFontSize;
+            streamingBodyLabel.color = npcTextColor;
+            streamingBodyLabel.textWrappingMode = TextWrappingModes.Normal;
+            streamingBodyLabel.overflowMode = TextOverflowModes.Overflow;
+        }
+
+        private void RebuildStreamingBubble()
+        {
+            if (streamingMessageRow == null)
+            {
+                return;
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(streamingMessageRow);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(messageContainer);
+            Canvas.ForceUpdateCanvases();
+            if (scrollRect != null)
+            {
+                scrollRect.verticalNormalizedPosition = 0f;
             }
         }
 

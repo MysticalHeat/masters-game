@@ -11,23 +11,28 @@ namespace MastersGame.Gameplay
     {
         [SerializeField] private PlayerController3D playerController;
         [SerializeField] private ChatWindowController chatWindow;
+        [SerializeField] private LlamaCppHttpLanguageModel llamaModel;
         [SerializeField] private SentisLocalLanguageModel sentisModel;
         [SerializeField] private StubLocalLanguageModel stubModel;
-        [SerializeField] private int maxVisibleHistory = 12;
+        [SerializeField] private int maxVisibleHistory = 6;
         [SerializeField] private bool enableDebugLogging = true;
 
         private readonly List<ChatMessage> history = new();
+        private readonly object streamingSync = new();
 
         private CancellationTokenSource generationCancellation;
         private NpcChatTarget currentNpc;
         private bool isBusy;
+        private bool hasPendingStreamingUpdate;
+        private string pendingStreamingText;
 
         public bool ChatOpen { get; private set; }
 
-        public void Configure(PlayerController3D controller, ChatWindowController window, SentisLocalLanguageModel sentis, StubLocalLanguageModel stub)
+        public void Configure(PlayerController3D controller, ChatWindowController window, LlamaCppHttpLanguageModel llama, SentisLocalLanguageModel sentis, StubLocalLanguageModel stub)
         {
             playerController = controller;
             chatWindow = window;
+            llamaModel = llama;
             sentisModel = sentis;
             stubModel = stub;
         }
@@ -39,6 +44,11 @@ namespace MastersGame.Gameplay
                 chatWindow.SendRequested += HandleSendRequested;
                 chatWindow.CloseRequested += CloseConversation;
             }
+        }
+
+        private void Update()
+        {
+            FlushPendingStreamingUpdate();
         }
 
         private void OnDestroy()
@@ -79,6 +89,7 @@ namespace MastersGame.Gameplay
         public void CloseConversation()
         {
             CancelGeneration();
+            ClearPendingStreamingUpdate();
 
             ChatOpen = false;
             isBusy = false;
@@ -110,17 +121,37 @@ namespace MastersGame.Gameplay
                 return;
             }
 
+            var chatRequest = currentNpc.BuildRequest(new List<ChatMessage>(history), trimmedMessage);
             AddPlayerMessage(trimmedMessage);
 
             isBusy = true;
             generationCancellation = new CancellationTokenSource();
             var languageModel = GetModel();
             LogDebug($"Sending message to {currentNpc.NpcName} via {languageModel.DisplayName}: {trimmedMessage}");
-            chatWindow.SetBusy(true, $"Generating via {languageModel.DisplayName}...");
+            chatWindow.SetBusy(true, $"Генерация через {languageModel.DisplayName}...");
 
             try
             {
-                var reply = await languageModel.GenerateReplyAsync(currentNpc.BuildRequest(new List<ChatMessage>(history), trimmedMessage), generationCancellation.Token);
+                if (languageModel is IStreamingLocalLanguageModel streamingModel)
+                {
+                    chatWindow.BeginStreamingNpcMessage(currentNpc.NpcName);
+                    var streamedReply = await streamingModel.GenerateReplyStreamingAsync(chatRequest, HandleStreamingPartialText, generationCancellation.Token);
+                    FlushPendingStreamingUpdate();
+
+                    if (!ChatOpen || currentNpc == null)
+                    {
+                        return;
+                    }
+
+                    LogDebug($"Reply from {languageModel.DisplayName}: {streamedReply}");
+                    chatWindow.CompleteStreamingNpcMessage(streamedReply);
+                    AddHistoryMessage(new ChatMessage(ChatRole.Npc, streamedReply));
+                    chatWindow.SetBusy(false, languageModel.StatusSummary);
+                    chatWindow.FocusInput();
+                    return;
+                }
+
+                var reply = await languageModel.GenerateReplyAsync(chatRequest, generationCancellation.Token);
 
                 if (!ChatOpen || currentNpc == null)
                 {
@@ -136,7 +167,9 @@ namespace MastersGame.Gameplay
             {
                 if (ChatOpen)
                 {
-                    chatWindow.SetBusy(false, "Generation cancelled.");
+                    ClearPendingStreamingUpdate();
+                    chatWindow.CancelStreamingNpcMessage();
+                    chatWindow.SetBusy(false, "Генерация отменена.");
                 }
             }
             catch (Exception exception)
@@ -144,8 +177,10 @@ namespace MastersGame.Gameplay
                 Debug.LogException(exception);
                 if (ChatOpen)
                 {
+                    ClearPendingStreamingUpdate();
+                    chatWindow.CancelStreamingNpcMessage();
                     AddNpcMessage($"Ошибка генерации: {exception.Message}");
-                    chatWindow.SetBusy(false, "Generation failed.");
+                    chatWindow.SetBusy(false, "Генерация не удалась.");
                 }
             }
             finally
@@ -158,6 +193,11 @@ namespace MastersGame.Gameplay
 
         private ILocalLanguageModel GetModel()
         {
+            if (llamaModel != null && llamaModel.IsConfigured)
+            {
+                return llamaModel;
+            }
+
             if (sentisModel != null && sentisModel.IsConfigured)
             {
                 return sentisModel;
@@ -198,6 +238,47 @@ namespace MastersGame.Gameplay
             generationCancellation.Cancel();
             generationCancellation.Dispose();
             generationCancellation = null;
+        }
+
+        private void HandleStreamingPartialText(string text)
+        {
+            lock (streamingSync)
+            {
+                pendingStreamingText = text;
+                hasPendingStreamingUpdate = true;
+            }
+        }
+
+        private void FlushPendingStreamingUpdate()
+        {
+            string textToApply = null;
+
+            lock (streamingSync)
+            {
+                if (!hasPendingStreamingUpdate)
+                {
+                    return;
+                }
+
+                textToApply = pendingStreamingText;
+                hasPendingStreamingUpdate = false;
+            }
+
+            if (!ChatOpen || chatWindow == null)
+            {
+                return;
+            }
+
+            chatWindow.UpdateStreamingNpcMessage(textToApply);
+        }
+
+        private void ClearPendingStreamingUpdate()
+        {
+            lock (streamingSync)
+            {
+                pendingStreamingText = null;
+                hasPendingStreamingUpdate = false;
+            }
         }
 
         private void LogDebug(string message)
