@@ -147,7 +147,7 @@ namespace MastersGame.AI
 
         private string BuildPrompt(ChatRequest request)
         {
-            var prompt = $"<|im_start|>system\n{request.Persona}<|im_end|>\n";
+            var prompt = $"<|im_start|>system\n{NpcConversationSupport.BuildSystemPrompt(request, true)}<|im_end|>\n";
             foreach (var message in request.History)
             {
                 var role = message.Role == ChatRole.Player ? "user" : "assistant";

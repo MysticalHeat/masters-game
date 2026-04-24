@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -24,12 +25,14 @@ namespace MastersGame.Editor
         {
             public PlayerController3D Controller;
             public PlayerInteractionController Interaction;
+            public PlayerHealth Health;
         }
 
         private sealed class ChatBundle
         {
             public ChatWindowController Window;
             public InteractionPromptView Prompt;
+            public PlayerHudController Hud;
         }
 
         [MenuItem("Tools/LLM Chat/Create MVP Scene")]
@@ -42,15 +45,16 @@ namespace MastersGame.Editor
             var actionAsset = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
             if (actionAsset == null)
             {
-                EditorUtility.DisplayDialog("Missing Input Actions", "Assets/InputSystem_Actions.inputactions was not found.", "OK");
+                ShowDialog("Missing Input Actions", "Assets/InputSystem_Actions.inputactions was not found.");
                 return;
             }
 
-            CreateEnvironment();
+            var sunLight = CreateEnvironment();
             CreateEventSystem();
 
             var systems = new GameObject("Systems");
             var gameManager = systems.AddComponent<NpcChatGameManager>();
+            var dayNightCycle = systems.AddComponent<DayNightCycle>();
             var llamaModel = systems.AddComponent<LlamaCppHttpLanguageModel>();
             var sentisModel = systems.AddComponent<SentisLocalLanguageModel>();
             var stubModel = systems.AddComponent<StubLocalLanguageModel>();
@@ -63,13 +67,17 @@ namespace MastersGame.Editor
             var npc = CreateNpc();
 
             gameManager.Configure(player.Controller, chatBundle.Window, llamaModel, sentisModel, stubModel);
+            gameManager.SetWorldStateSources(player.Health, dayNightCycle);
             player.Interaction.Configure(gameManager, chatBundle.Prompt);
+            dayNightCycle.Configure(sunLight, player.Controller.PlayerCamera);
+            chatBundle.Hud.Bind(player.Health);
+            chatBundle.Hud.BindTimeOfDay(dayNightCycle);
 
             Selection.activeGameObject = npc.gameObject;
             var saveSucceeded = EditorSceneManager.SaveScene(scene, ScenePath);
             if (!saveSucceeded)
             {
-                EditorUtility.DisplayDialog("Scene Save Failed", $"Unity did not save the MVP scene to {ScenePath}.", "OK");
+                ShowDialog("Scene Save Failed", $"Unity did not save the MVP scene to {ScenePath}.");
                 return;
             }
 
@@ -78,7 +86,7 @@ namespace MastersGame.Editor
             AssetDatabase.Refresh();
             EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
 
-            EditorUtility.DisplayDialog("MVP Scene Created", $"Scene saved to {ScenePath}. Open it and press Play to test the player, NPC and chat flow.", "OK");
+            ShowDialog("MVP Scene Created", $"Scene saved to {ScenePath}. Open it and press Play to test the player, NPC and chat flow.");
         }
 
         private static void EnsureScenesFolderExists()
@@ -91,13 +99,18 @@ namespace MastersGame.Editor
             AssetDatabase.CreateFolder("Assets", "Scenes");
         }
 
-        private static void CreateEnvironment()
+        private static Light CreateEnvironment()
         {
             var sun = new GameObject("Sun");
             sun.transform.rotation = Quaternion.Euler(50f, -35f, 0f);
             var light = sun.AddComponent<Light>();
             light.type = LightType.Directional;
             light.intensity = 1.1f;
+            light.color = new Color(1f, 0.96f, 0.84f, 1f);
+            light.shadows = LightShadows.Soft;
+
+            RenderSettings.ambientMode = AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.62f, 0.67f, 0.75f, 1f);
 
             var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Ground";
@@ -113,6 +126,8 @@ namespace MastersGame.Editor
             CreateProp("Crate_A", new Vector3(-4f, 0.5f, 3f), new Vector3(1.25f, 1f, 1.25f), new Color(0.35f, 0.27f, 0.18f));
             CreateProp("Crate_B", new Vector3(4f, 0.5f, -2f), new Vector3(1f, 1f, 1f), new Color(0.28f, 0.22f, 0.14f));
             CreateProp("Marker", new Vector3(0f, 0.1f, 4f), new Vector3(2f, 0.2f, 2f), new Color(0.15f, 0.35f, 0.42f));
+
+            return light;
         }
 
         private static void CreateEventSystem()
@@ -141,6 +156,11 @@ namespace MastersGame.Editor
 
             var movement = root.AddComponent<PlayerController3D>();
             var interaction = root.AddComponent<PlayerInteractionController>();
+            var health = root.GetComponent<PlayerHealth>();
+            if (health == null)
+            {
+                health = root.AddComponent<PlayerHealth>();
+            }
 
             var visual = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             visual.name = "Visual";
@@ -170,7 +190,8 @@ namespace MastersGame.Editor
             return new PlayerBundle
             {
                 Controller = movement,
-                Interaction = interaction
+                Interaction = interaction,
+                Health = health
             };
         }
 
@@ -188,9 +209,9 @@ namespace MastersGame.Editor
 
             var target = npc.AddComponent<NpcChatTarget>();
             target.Configure(
-                "Archivist",
-                "Неспешный смотритель тестовой локации, который отвечает коротко, понятно и по делу.",
-                "Я слежу за этой тестовой площадкой. Спроси меня о прототипе, модели или самой сцене.",
+                "Элдрик",
+                "Ты — Элдрик, уставший стражник города Рифт. Ты ненавидишь магию, любишь крепкий эль, говоришь грубо, коротко и недоверчиво. Ты сторожишь ворота и улицы по ночам, презираешь пустую болтовню и замечаешь слабость, кровь и странности в людях. Никогда не выходи из роли стражника и отвечай как житель этого мира.",
+                "Стой. Если есть дело — говори быстро. Если дела нет, не путайся под ногами.",
                 "Press E / Interact to talk");
 
             return target;
@@ -215,6 +236,7 @@ namespace MastersGame.Editor
             panelRect.offsetMax = Vector2.zero;
 
             var chatWindow = panel.gameObject.AddComponent<ChatWindowController>();
+            var playerHud = CreatePlayerHud(chatCanvasObject.transform);
 
             var headerBar = CreateUiObject("HeaderBar", panel);
             headerBar.gameObject.AddComponent<Image>().color = new Color(0.09f, 0.11f, 0.16f, 1f);
@@ -348,8 +370,99 @@ namespace MastersGame.Editor
             return new ChatBundle
             {
                 Window = chatWindow,
-                Prompt = promptView
+                Prompt = promptView,
+                Hud = playerHud
             };
+        }
+
+        private static PlayerHudController CreatePlayerHud(Transform parent)
+        {
+            var hudPanel = CreateUiObject("PlayerHudPanel", parent);
+            hudPanel.gameObject.AddComponent<Image>().color = new Color(0.07f, 0.08f, 0.12f, 0.92f);
+            var hudPanelRect = hudPanel.GetComponent<RectTransform>();
+            hudPanelRect.anchorMin = new Vector2(0.02f, 0.68f);
+            hudPanelRect.anchorMax = new Vector2(0.24f, 0.96f);
+            hudPanelRect.offsetMin = Vector2.zero;
+            hudPanelRect.offsetMax = Vector2.zero;
+
+            var hudLayout = hudPanel.gameObject.AddComponent<VerticalLayoutGroup>();
+            hudLayout.padding = new RectOffset(14, 14, 12, 12);
+            hudLayout.spacing = 8f;
+            hudLayout.childControlWidth = true;
+            hudLayout.childControlHeight = true;
+            hudLayout.childForceExpandWidth = true;
+            hudLayout.childForceExpandHeight = false;
+
+            var title = CreateTmpText("PlayerLabel", hudPanel, 16, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            title.text = "Player";
+            title.color = Color.white;
+
+            var healthRow = CreateUiObject("HealthRow", hudPanel);
+            var healthRowLayout = healthRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            healthRowLayout.spacing = 6f;
+            healthRowLayout.childControlWidth = true;
+            healthRowLayout.childControlHeight = true;
+            healthRowLayout.childForceExpandWidth = false;
+            healthRowLayout.childForceExpandHeight = false;
+
+            var healthLabel = CreateTmpText("HealthLabel", healthRow, 13, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            healthLabel.text = "Health";
+            healthLabel.color = new Color(0.70f, 0.76f, 0.86f);
+            var healthLabelElement = healthLabel.gameObject.AddComponent<LayoutElement>();
+            healthLabelElement.flexibleWidth = 1f;
+
+            var healthValue = CreateTmpText("HealthValue", healthRow, 13, TextAlignmentOptions.MidlineRight, FontStyles.Bold);
+            healthValue.text = "--";
+            healthValue.color = Color.white;
+
+            var healthBar = CreateUiObject("HealthBar", hudPanel);
+            healthBar.gameObject.AddComponent<Image>().color = new Color(0.14f, 0.16f, 0.22f, 1f);
+            var healthBarElement = healthBar.gameObject.AddComponent<LayoutElement>();
+            healthBarElement.preferredHeight = 18f;
+
+            var healthFill = CreateUiObject("Fill", healthBar);
+            var healthFillRect = healthFill.GetComponent<RectTransform>();
+            healthFillRect.anchorMin = Vector2.zero;
+            healthFillRect.anchorMax = Vector2.one;
+            healthFillRect.offsetMin = new Vector2(2f, 2f);
+            healthFillRect.offsetMax = new Vector2(-2f, -2f);
+
+            var healthFillImage = healthFill.gameObject.AddComponent<Image>();
+            healthFillImage.color = new Color(0.18f, 0.72f, 0.32f, 1f);
+            healthFillImage.type = Image.Type.Filled;
+            healthFillImage.fillMethod = Image.FillMethod.Horizontal;
+            healthFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+            healthFillImage.fillAmount = 1f;
+
+            var timeRow = CreateUiObject("TimeRow", hudPanel);
+            var timeRowLayout = timeRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            timeRowLayout.spacing = 6f;
+            timeRowLayout.childControlWidth = true;
+            timeRowLayout.childControlHeight = true;
+            timeRowLayout.childForceExpandWidth = false;
+            timeRowLayout.childForceExpandHeight = false;
+
+            var timeLabel = CreateTmpText("TimeLabel", timeRow, 13, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            timeLabel.text = "Time";
+            timeLabel.color = new Color(0.70f, 0.76f, 0.86f);
+            var timeLabelElement = timeLabel.gameObject.AddComponent<LayoutElement>();
+            timeLabelElement.flexibleWidth = 1f;
+
+            var timeValue = CreateTmpText("TimeValue", timeRow, 13, TextAlignmentOptions.MidlineRight, FontStyles.Bold);
+            timeValue.text = "--";
+            timeValue.color = Color.white;
+
+            var damageButton = CreateTmpButton("DamageButton", hudPanel, "-10 HP [H]", new Color(0.57f, 0.18f, 0.20f, 0.98f));
+            var damageButtonElement = damageButton.gameObject.AddComponent<LayoutElement>();
+            damageButtonElement.preferredHeight = 34f;
+
+            var toggleDayNightButton = CreateTmpButton("DayNightButton", hudPanel, "Toggle Day/Night [N]", new Color(0.20f, 0.33f, 0.56f, 0.98f));
+            var toggleDayNightElement = toggleDayNightButton.gameObject.AddComponent<LayoutElement>();
+            toggleDayNightElement.preferredHeight = 34f;
+
+            var playerHud = hudPanel.gameObject.AddComponent<PlayerHudController>();
+            playerHud.Configure(healthValue, healthFillImage, damageButton, timeValue, toggleDayNightButton);
+            return playerHud;
         }
 
         private static void EnsureSceneInBuildSettings(string scenePath)
@@ -489,6 +602,17 @@ namespace MastersGame.Editor
             inputField.selectionColor = new Color(0.25f, 0.45f, 0.65f, 0.45f);
 
             return inputField;
+        }
+
+        private static void ShowDialog(string title, string message)
+        {
+            if (Application.isBatchMode)
+            {
+                Debug.Log($"[{nameof(NpcChatMvpSceneBuilder)}] {title}: {message}");
+                return;
+            }
+
+            EditorUtility.DisplayDialog(title, message, "OK");
         }
     }
 }

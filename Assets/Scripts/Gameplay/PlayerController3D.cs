@@ -5,6 +5,7 @@ namespace MastersGame.Gameplay
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerInput))]
+    [RequireComponent(typeof(PlayerHealth))]
     public class PlayerController3D : MonoBehaviour
     {
         [SerializeField] private Transform cameraPitchRoot;

@@ -8,8 +8,8 @@ namespace MastersGame.Gameplay
     public class NpcChatTarget : MonoBehaviour
     {
         [SerializeField] private string npcName = "Archivist";
-        [SerializeField] private string persona = "Спокойный хранитель места, который кратко и доброжелательно отвечает на вопросы игрока.";
-        [SerializeField] private string greeting = "Привет. Если хочешь, задай вопрос о локации или о прототипе.";
+        [SerializeField] private string persona = "Спокойный хранитель места, который кратко и доброжелательно отвечает на вопросы прохожим и не выходит из своей роли.";
+        [SerializeField] private string greeting = "Привет. Если есть дело — говори.";
         [SerializeField] private string interactionHint = "Press Interact to talk";
 
         public string NpcName => npcName;
@@ -28,9 +28,9 @@ namespace MastersGame.Gameplay
             interactionHint = configuredHint;
         }
 
-        public ChatRequest BuildRequest(IReadOnlyList<ChatMessage> history, string playerMessage)
+        public ChatRequest BuildRequest(IReadOnlyList<ChatMessage> history, string playerMessage, WorldContextSnapshot worldContext)
         {
-            return new ChatRequest(npcName, persona, greeting, history, playerMessage);
+            return new ChatRequest(npcName, persona, greeting, history, playerMessage, worldContext);
         }
 
         private void Reset()

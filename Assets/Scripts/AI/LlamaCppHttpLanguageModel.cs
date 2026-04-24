@@ -175,8 +175,7 @@ namespace MastersGame.AI
 
         private string BuildSystemPrompt(ChatRequest request)
         {
-            var responseRule = forceRussianResponses ? "Отвечай только на русском языке." : string.Empty;
-            return $"Ты NPC по имени {request.NpcName}. {request.Persona} {responseRule} Отвечай естественно, кратко и оставайся в роли персонажа.".Trim();
+            return NpcConversationSupport.BuildSystemPrompt(request, forceRussianResponses);
         }
 
         private static string GetUserFacingError(string message)

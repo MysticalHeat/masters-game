@@ -28,8 +28,8 @@ namespace MastersGame.UI
         [SerializeField] private Color systemTextColor = new Color(0.72f, 0.94f, 0.78f);
         [SerializeField] private Color authorLabelColor = new Color(1f, 1f, 1f, 0.50f);
         [SerializeField] private float maxBubbleWidthFraction = 0.78f;
-        [SerializeField] private int bodyFontSize = 16;
-        [SerializeField] private int authorFontSize = 11;
+        [SerializeField] private int bodyFontSize = 20;
+        [SerializeField] private int authorFontSize = 20;
 
         [Header("Debug")]
         [SerializeField] private bool enableDebugLogging = true;
