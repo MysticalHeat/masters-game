@@ -3575,7 +3575,7 @@ MonoBehaviour:
   llamaModel: {fileID: 1319987616}
   sentisModel: {fileID: 1319987615}
   stubModel: {fileID: 1319987614}
-  maxVisibleHistory: 6
+  maxVisibleHistory: 20
   enableDebugLogging: 1
 --- !u!114 &1319987614
 MonoBehaviour:
@@ -5026,6 +5026,7 @@ MonoBehaviour:
     \u0415\u0441\u043B\u0438 \u0434\u0435\u043B\u0430 \u043D\u0435\u0442, \u043D\u0435
     \u043F\u0443\u0442\u0430\u0439\u0441\u044F \u043F\u043E\u0434 \u043D\u043E\u0433\u0430\u043C\u0438."
   interactionHint: Press E / Interact to talk
+  affinity: 0
 --- !u!135 &1596457077
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MastersGame.AI
 {
@@ -75,7 +76,7 @@ namespace MastersGame.AI
 
     public class ChatRequest
     {
-        public ChatRequest(string npcName, string persona, string greeting, IReadOnlyList<ChatMessage> history, string playerMessage, WorldContextSnapshot worldContext)
+        public ChatRequest(string npcName, string persona, string greeting, IReadOnlyList<ChatMessage> history, string playerMessage, WorldContextSnapshot worldContext, int npcAffinity)
         {
             NpcName = string.IsNullOrWhiteSpace(npcName) ? "NPC" : npcName.Trim();
             Persona = persona?.Trim() ?? string.Empty;
@@ -83,6 +84,7 @@ namespace MastersGame.AI
             History = history ?? Array.Empty<ChatMessage>();
             PlayerMessage = playerMessage?.Trim() ?? string.Empty;
             WorldContext = worldContext;
+            NpcAffinity = Math.Max(-10, Math.Min(10, npcAffinity));
         }
 
         public string NpcName { get; }
@@ -96,10 +98,18 @@ namespace MastersGame.AI
         public string PlayerMessage { get; }
 
         public WorldContextSnapshot WorldContext { get; }
+
+        public int NpcAffinity { get; }
     }
 
     public static class NpcConversationSupport
     {
+        private const int HostileAffinityThreshold = -3;
+
+        private static readonly Regex RelationshipTagRegex = new Regex(
+            @"\[\s*REL\s*:\s*(?<delta>[+-]?\d+)\s*\]",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         private static readonly string[] MetaLeakTerms =
         {
             "ai",
@@ -148,7 +158,9 @@ namespace MastersGame.AI
             builder.AppendLine($"- Время суток: {GetLocalizedTimeOfDay(request.WorldContext)}.");
             builder.AppendLine($"- Текущее время: {request.WorldContext?.FormattedTime ?? "--:--"}.");
             builder.AppendLine($"- Состояние игрока: {BuildPlayerConditionSummary(request.WorldContext)}.");
+            builder.AppendLine($"- Отношение {request.NpcName} к игроку: {request.NpcAffinity}/10, {BuildAffinityDescription(request.NpcAffinity)}.");
             AppendScenePriorityGuidance(builder, request);
+            AppendRelationshipGuidance(builder, request);
             builder.AppendLine();
             builder.AppendLine("Жёсткие правила:");
             builder.AppendLine("1. Всегда оставайся этим персонажем и говори только как житель мира игры.");
@@ -163,8 +175,23 @@ namespace MastersGame.AI
             builder.AppendLine(forceRussianResponses
                 ? "10. Отвечай только на русском языке."
                 : "10. Отвечай на языке игрока, но не выходи из роли.");
-            builder.AppendLine("11. Верни только реплику персонажа без служебных пометок и пояснений.");
+            builder.AppendLine("11. Каждый ответ обязан заканчиваться скрытым тегом изменения отношения строго в формате [REL: n], где n — целое число от -3 до 2.");
+            builder.AppendLine("12. Сначала напиши обычную видимую реплику персонажа, затем пробел, затем [REL: n]. Никогда не ставь [REL: n] в начало ответа и никогда не возвращай один только тег без реплики.");
+            builder.AppendLine("13. Если отношение не изменилось, всё равно добавь [REL: 0] в самый конец ответа.");
+            builder.AppendLine("14. Тег [REL: n] не объясняй и не упоминай в самой реплике. Это служебная метка для памяти отношений.");
             return builder.ToString().Trim();
+        }
+
+        public static bool ShouldRefuseForLowAffinity(ChatRequest request)
+        {
+            return request != null && request.NpcAffinity <= HostileAffinityThreshold;
+        }
+
+        public static string BuildLowAffinityRefusal(ChatRequest request)
+        {
+            return request != null && IsEldric(request.NpcName)
+                ? "Я с тобой уже наговорился. Проваливай, пока я сам тебя за ворота не выкинул."
+                : "Я не собираюсь больше отвечать на твои вопросы.";
         }
 
         private static void AppendScenePriorityGuidance(StringBuilder builder, ChatRequest request)
@@ -199,8 +226,33 @@ namespace MastersGame.AI
             builder.AppendLine("- Выбирай формулировку сам, но держи её естественной, короткой и в характере персонажа.");
         }
 
+        private static void AppendRelationshipGuidance(StringBuilder builder, ChatRequest request)
+        {
+            builder.AppendLine();
+            builder.AppendLine("Память отношений:");
+            builder.AppendLine("- У тебя есть отношение к игроку от -10 до 10. Оно меняется скрытым тегом [REL: n] в конце каждого ответа.");
+            builder.AppendLine("- Выставляй [REL: -3] за прямые оскорбления, хамство, угрозы или унижение персонажа.");
+            builder.AppendLine("- Выставляй [REL: -1] или [REL: -2] за лёгкую грубость, подозрительные требования или пустую дерзость.");
+            builder.AppendLine("- Выставляй [REL: 0] за нейтральные вопросы и обычный разговор.");
+            builder.AppendLine("- Выставляй [REL: 1] или [REL: 2] за уважение, помощь, извинение или полезную информацию.");
+            builder.AppendLine("- Если игрок оскорбляет тебя, не повторяй его оскорбление дословно. Ответь своей короткой грубой реакцией в роли и снизь отношение.");
+            builder.AppendLine("- Служебный тег обязателен даже при нулевом изменении: нейтральный ответ заканчивай [REL: 0].");
+            builder.AppendLine("- Формат ответа всегда такой: <реплика персонажа> [REL: n]. Другого текста после тега быть не должно.");
+
+            if (ShouldRefuseForLowAffinity(request))
+            {
+                builder.AppendLine("- Отношение уже очень плохое: персонаж помнит прежнюю грубость и должен отказываться отвечать на обычные вопросы, коротко и в роли. Такой отказ обычно заканчивай [REL: 0], если игрок снова не хамит.");
+            }
+        }
+
         public static string SanitizeNpcReply(string text, ChatRequest request)
         {
+            return SanitizeNpcReply(text, request, out _);
+        }
+
+        public static string SanitizeNpcReply(string text, ChatRequest request, out int relationshipDelta)
+        {
+            relationshipDelta = 0;
             if (string.IsNullOrWhiteSpace(text))
             {
                 return BuildFallbackReply(request);
@@ -208,8 +260,15 @@ namespace MastersGame.AI
 
             var cleaned = StripRoleMarkers(text.Trim());
             cleaned = StripNpcNamePrefix(cleaned, request?.NpcName);
+            cleaned = ExtractRelationshipDelta(cleaned, out relationshipDelta);
 
-            if (string.IsNullOrWhiteSpace(cleaned) || ContainsMetaLeak(cleaned))
+            if (ContainsMetaLeak(cleaned))
+            {
+                relationshipDelta = 0;
+                return BuildFallbackReply(request);
+            }
+
+            if (string.IsNullOrWhiteSpace(cleaned))
             {
                 return BuildFallbackReply(request);
             }
@@ -298,6 +357,31 @@ namespace MastersGame.AI
             var currentHealth = Math.Round(worldContext.PlayerHealthCurrent);
             var maxHealth = Math.Round(worldContext.PlayerHealthMax);
             return $"{currentHealth:0}/{maxHealth:0}, {GetHealthBandDescription(worldContext.PlayerHealthBand)}";
+        }
+
+        private static string BuildAffinityDescription(int affinity)
+        {
+            if (affinity <= HostileAffinityThreshold)
+            {
+                return "персонаж зол и больше не хочет помогать игроку";
+            }
+
+            if (affinity < 0)
+            {
+                return "персонаж относится к игроку настороженно";
+            }
+
+            if (affinity >= 6)
+            {
+                return "персонаж доверяет игроку";
+            }
+
+            if (affinity > 0)
+            {
+                return "персонаж относится к игроку чуть лучше обычного";
+            }
+
+            return "отношение нейтральное";
         }
 
         private static string BuildHealthRemark(WorldContextSnapshot worldContext)
@@ -400,6 +484,30 @@ namespace MastersGame.AI
             }
 
             return false;
+        }
+
+        private static string ExtractRelationshipDelta(string text, out int relationshipDelta)
+        {
+            relationshipDelta = 0;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
+
+            var match = RelationshipTagRegex.Match(text);
+            if (match.Success && int.TryParse(match.Groups["delta"].Value, out var parsedDelta))
+            {
+                relationshipDelta = Math.Max(-3, Math.Min(2, parsedDelta));
+            }
+
+            var withoutCompleteTags = RelationshipTagRegex.Replace(text, string.Empty).Trim();
+            var partialTagIndex = withoutCompleteTags.LastIndexOf("[REL", StringComparison.OrdinalIgnoreCase);
+            if (partialTagIndex >= 0)
+            {
+                withoutCompleteTags = withoutCompleteTags.Substring(0, partialTagIndex).Trim();
+            }
+
+            return withoutCompleteTags;
         }
 
         private static bool IsEldric(string npcName)

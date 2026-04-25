@@ -20,7 +20,7 @@ namespace MastersGame.Gameplay
         [SerializeField] private LlamaCppHttpLanguageModel llamaModel;
         [SerializeField] private SentisLocalLanguageModel sentisModel;
         [SerializeField] private StubLocalLanguageModel stubModel;
-        [SerializeField] private int maxVisibleHistory = 6;
+        [SerializeField] private int maxVisibleHistory = 20;
         [SerializeField] private bool enableDebugLogging = true;
 
         private readonly List<ChatMessage> history = new();
@@ -137,6 +137,16 @@ namespace MastersGame.Gameplay
             var chatRequest = currentNpc.BuildRequest(new List<ChatMessage>(history), trimmedMessage, BuildWorldContext());
             AddPlayerMessage(trimmedMessage);
 
+            if (NpcConversationSupport.ShouldRefuseForLowAffinity(chatRequest))
+            {
+                var refusal = NpcConversationSupport.BuildLowAffinityRefusal(chatRequest);
+                LogDebug($"{currentNpc.NpcName} refuses because affinity is {currentNpc.Affinity}: {refusal}");
+                AddNpcMessage(refusal);
+                chatWindow.SetBusy(false, GetModel().StatusSummary);
+                chatWindow.FocusInput();
+                return;
+            }
+
             isBusy = true;
             generationCancellation = new CancellationTokenSource();
             var languageModel = GetModel();
@@ -156,7 +166,8 @@ namespace MastersGame.Gameplay
                         return;
                     }
 
-                    var sanitizedStreamedReply = NpcConversationSupport.SanitizeNpcReply(streamedReply, chatRequest);
+                    var sanitizedStreamedReply = NpcConversationSupport.SanitizeNpcReply(streamedReply, chatRequest, out var streamedRelationshipDelta);
+                    ApplyRelationshipDelta(streamedRelationshipDelta);
                     LogDebug($"Reply from {languageModel.DisplayName}: {sanitizedStreamedReply}");
                     chatWindow.CompleteStreamingNpcMessage(sanitizedStreamedReply);
                     AddHistoryMessage(new ChatMessage(ChatRole.Npc, sanitizedStreamedReply));
@@ -172,7 +183,8 @@ namespace MastersGame.Gameplay
                     return;
                 }
 
-                var sanitizedReply = NpcConversationSupport.SanitizeNpcReply(reply, chatRequest);
+                var sanitizedReply = NpcConversationSupport.SanitizeNpcReply(reply, chatRequest, out var relationshipDelta);
+                ApplyRelationshipDelta(relationshipDelta);
                 LogDebug($"Reply from {languageModel.DisplayName}: {sanitizedReply}");
                 AddNpcMessage(sanitizedReply);
                 chatWindow.SetBusy(false, languageModel.StatusSummary);
@@ -252,6 +264,18 @@ namespace MastersGame.Gameplay
             }
         }
 
+        private void ApplyRelationshipDelta(int delta)
+        {
+            if (currentNpc == null || delta == 0)
+            {
+                return;
+            }
+
+            var previousAffinity = currentNpc.Affinity;
+            currentNpc.ApplyAffinityDelta(delta);
+            LogDebug($"{currentNpc.NpcName} affinity changed by {delta}: {previousAffinity} -> {currentNpc.Affinity}");
+        }
+
         private void CancelGeneration()
         {
             if (generationCancellation == null)
@@ -314,7 +338,7 @@ namespace MastersGame.Gameplay
         {
             var previewRequest = currentNpc != null
                 ? currentNpc.BuildRequest(Array.Empty<ChatMessage>(), string.Empty, BuildWorldContext())
-                : new ChatRequest("NPC", string.Empty, string.Empty, Array.Empty<ChatMessage>(), string.Empty, BuildWorldContext());
+                : new ChatRequest("NPC", string.Empty, string.Empty, Array.Empty<ChatMessage>(), string.Empty, BuildWorldContext(), 0);
 
             var sanitized = NpcConversationSupport.SanitizeNpcReply(text, previewRequest);
             return string.IsNullOrWhiteSpace(sanitized)

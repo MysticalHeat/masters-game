@@ -11,6 +11,7 @@ namespace MastersGame.Gameplay
         [SerializeField] private string persona = "Спокойный хранитель места, который кратко и доброжелательно отвечает на вопросы прохожим и не выходит из своей роли.";
         [SerializeField] private string greeting = "Привет. Если есть дело — говори.";
         [SerializeField] private string interactionHint = "Press Interact to talk";
+        [SerializeField] [Range(-10, 10)] private int affinity;
 
         public string NpcName => npcName;
 
@@ -19,6 +20,10 @@ namespace MastersGame.Gameplay
         public string Greeting => greeting;
 
         public string InteractionHint => interactionHint;
+
+        public int Affinity => affinity;
+
+        public bool IsHostile => affinity <= -6;
 
         public void Configure(string configuredName, string configuredPersona, string configuredGreeting, string configuredHint)
         {
@@ -30,7 +35,17 @@ namespace MastersGame.Gameplay
 
         public ChatRequest BuildRequest(IReadOnlyList<ChatMessage> history, string playerMessage, WorldContextSnapshot worldContext)
         {
-            return new ChatRequest(npcName, persona, greeting, history, playerMessage, worldContext);
+            return new ChatRequest(npcName, persona, greeting, history, playerMessage, worldContext, affinity);
+        }
+
+        public void ApplyAffinityDelta(int delta)
+        {
+            if (delta == 0)
+            {
+                return;
+            }
+
+            affinity = Mathf.Clamp(affinity + delta, -10, 10);
         }
 
         private void Reset()
