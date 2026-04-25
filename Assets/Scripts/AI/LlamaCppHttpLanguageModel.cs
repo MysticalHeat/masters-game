@@ -15,7 +15,7 @@ namespace MastersGame.AI
         [SerializeField] private string baseUrl = "http://127.0.0.1:8080";
         [SerializeField] private string modelName = "qwen";
         [SerializeField] private int maxTokens = 128;
-        [SerializeField] private float temperature = 0.6f;
+        [SerializeField] private float temperature = 0.3f;
         [SerializeField] private float topP = 0.9f;
         [SerializeField] private int requestTimeoutSeconds = 60;
         [SerializeField] private bool forceRussianResponses = true;
