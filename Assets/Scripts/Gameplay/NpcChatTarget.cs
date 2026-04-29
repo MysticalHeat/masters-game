@@ -12,6 +12,8 @@ namespace MastersGame.Gameplay
         [SerializeField] private string greeting = "Привет. Если есть дело — говори.";
         [SerializeField] private string interactionHint = "Press Interact to talk";
         [SerializeField] [Range(-10, 10)] private int affinity;
+        [SerializeField] private AudioSource voiceAudioSource;
+        [SerializeField] private string ttsVoiceId = "default";
 
         public string NpcName => npcName;
 
@@ -23,6 +25,10 @@ namespace MastersGame.Gameplay
 
         public int Affinity => affinity;
 
+        public AudioSource VoiceAudioSource => voiceAudioSource;
+
+        public string TtsVoiceId => ttsVoiceId;
+
         public bool IsHostile => affinity <= -6;
 
         public void Configure(string configuredName, string configuredPersona, string configuredGreeting, string configuredHint)
@@ -31,6 +37,12 @@ namespace MastersGame.Gameplay
             persona = configuredPersona;
             greeting = configuredGreeting;
             interactionHint = configuredHint;
+        }
+
+        public void ConfigureVoice(AudioSource configuredVoiceAudioSource, string configuredVoiceId)
+        {
+            voiceAudioSource = configuredVoiceAudioSource;
+            ttsVoiceId = string.IsNullOrWhiteSpace(configuredVoiceId) ? "default" : configuredVoiceId;
         }
 
         public ChatRequest BuildRequest(IReadOnlyList<ChatMessage> history, string playerMessage, WorldContextSnapshot worldContext)
@@ -52,6 +64,11 @@ namespace MastersGame.Gameplay
         {
             var trigger = GetComponent<Collider>();
             trigger.isTrigger = true;
+
+            if (voiceAudioSource == null)
+            {
+                voiceAudioSource = GetComponent<AudioSource>();
+            }
         }
 
         private void OnTriggerEnter(Collider other)

@@ -1,7 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace MastersGame.AI
 {
@@ -572,6 +577,464 @@ namespace MastersGame.AI
 
             var segments = formattedTime.Split(':');
             return segments.Length >= 2 && int.TryParse(segments[0], out hours);
+        }
+    }
+}
+
+namespace MastersGame.Voice
+{
+    public interface ISpeechToTextService
+    {
+        Task<string> TranscribeAsync(byte[] audioData, string fileName, CancellationToken cancellationToken);
+    }
+
+    public interface ITextToSpeechService
+    {
+        Task<AudioClip> SynthesizeAsync(string text, string voiceId, CancellationToken cancellationToken);
+    }
+
+    public class MicrophoneRecorder : MonoBehaviour
+    {
+        [SerializeField] private int sampleRate = 16000;
+        [SerializeField] private int maxRecordSeconds = 30;
+
+        private AudioClip recordingClip;
+        private string microphoneDevice;
+        private float recordStartTime;
+
+        public bool IsRecording { get; private set; }
+
+        public void BeginRecording()
+        {
+            if (IsRecording || Microphone.devices.Length == 0)
+            {
+                return;
+            }
+
+            microphoneDevice = Microphone.devices[0];
+            recordingClip = Microphone.Start(microphoneDevice, false, maxRecordSeconds, sampleRate);
+            recordStartTime = Time.realtimeSinceStartup;
+            IsRecording = true;
+        }
+
+        public byte[] EndRecording(out float durationSeconds)
+        {
+            durationSeconds = 0f;
+
+            if (!IsRecording)
+            {
+                return Array.Empty<byte>();
+            }
+
+            durationSeconds = Mathf.Max(0f, Time.realtimeSinceStartup - recordStartTime);
+            Microphone.End(microphoneDevice);
+            IsRecording = false;
+
+            if (recordingClip == null)
+            {
+                return Array.Empty<byte>();
+            }
+
+            var wav = EncodeAsWav(recordingClip, durationSeconds);
+            Destroy(recordingClip);
+            recordingClip = null;
+            microphoneDevice = null;
+            return wav;
+        }
+
+        public void CancelRecording()
+        {
+            if (IsRecording && !string.IsNullOrWhiteSpace(microphoneDevice))
+            {
+                Microphone.End(microphoneDevice);
+            }
+
+            if (recordingClip != null)
+            {
+                Destroy(recordingClip);
+                recordingClip = null;
+            }
+
+            microphoneDevice = null;
+            IsRecording = false;
+        }
+
+        private static byte[] EncodeAsWav(AudioClip clip, float durationSeconds)
+        {
+            if (clip == null)
+            {
+                return Array.Empty<byte>();
+            }
+
+            var sampleCount = Mathf.Min(clip.samples, Mathf.CeilToInt(durationSeconds * clip.frequency));
+            if (sampleCount <= 0)
+            {
+                return Array.Empty<byte>();
+            }
+
+            var channels = clip.channels;
+            var samples = new float[sampleCount * channels];
+            clip.GetData(samples, 0);
+
+            using var memoryStream = new MemoryStream();
+            using var writer = new BinaryWriter(memoryStream);
+
+            WriteWavHeader(writer, sampleCount, channels, clip.frequency);
+
+            for (var index = 0; index < samples.Length; index++)
+            {
+                var sample = Mathf.Clamp(samples[index], -1f, 1f);
+                writer.Write((short)(sample * short.MaxValue));
+            }
+
+            writer.Flush();
+            return memoryStream.ToArray();
+        }
+
+        private static void WriteWavHeader(BinaryWriter writer, int sampleCount, int channels, int frequency)
+        {
+            var byteRate = frequency * channels * sizeof(short);
+            var dataSize = sampleCount * channels * sizeof(short);
+
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("RIFF"));
+            writer.Write(36 + dataSize);
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("WAVE"));
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("fmt "));
+            writer.Write(16);
+            writer.Write((short)1);
+            writer.Write((short)channels);
+            writer.Write(frequency);
+            writer.Write(byteRate);
+            writer.Write((short)(channels * sizeof(short)));
+            writer.Write((short)16);
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("data"));
+            writer.Write(dataSize);
+        }
+    }
+
+    public class WhisperHttpSpeechToText : MonoBehaviour, ISpeechToTextService
+    {
+        [SerializeField] private string displayName = "Whisper HTTP";
+        [SerializeField] private bool useAsPrimaryBackend = true;
+        [SerializeField] private string baseUrl = "http://127.0.0.1:8081";
+        [SerializeField] private string transcriptionPath = "/v1/audio/transcriptions";
+        [SerializeField] private string modelName = "whisper-1";
+        [SerializeField] private int requestTimeoutSeconds = 120;
+
+        public string DisplayName => displayName;
+
+        public string StatusSummary { get; private set; } = "Speech-to-text backend отключён.";
+
+        public bool IsConfigured => useAsPrimaryBackend && !string.IsNullOrWhiteSpace(baseUrl);
+
+        public async Task<string> TranscribeAsync(byte[] audioData, string fileName, CancellationToken cancellationToken)
+        {
+            if (!IsConfigured)
+            {
+                StatusSummary = useAsPrimaryBackend
+                    ? "Speech-to-text backend не настроен. Укажи baseUrl."
+                    : "Speech-to-text backend отключён.";
+                return string.Empty;
+            }
+
+            if (audioData == null || audioData.Length == 0)
+            {
+                StatusSummary = "Speech-to-text получил пустой аудиопоток.";
+                return string.Empty;
+            }
+
+            var endpoint = baseUrl.TrimEnd('/') + transcriptionPath;
+            var formData = new WWWForm();
+            formData.AddField("model", modelName);
+            formData.AddBinaryData("file", audioData, string.IsNullOrWhiteSpace(fileName) ? "recording.wav" : fileName, "audio/wav");
+
+            using var webRequest = UnityWebRequest.Post(endpoint, formData);
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            webRequest.timeout = requestTimeoutSeconds;
+
+            using var registration = cancellationToken.Register(() => webRequest.Abort());
+
+            try
+            {
+                StatusSummary = $"Отправка аудио в {displayName}...";
+                await SendWebRequestAsync(webRequest, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    StatusSummary = "Распознавание отменено.";
+                    return string.Empty;
+                }
+
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    StatusSummary = BuildHttpFailureStatus(webRequest);
+                    return string.Empty;
+                }
+
+                var transcript = ExtractTranscript(webRequest.downloadHandler.text);
+                if (string.IsNullOrWhiteSpace(transcript))
+                {
+                    StatusSummary = "Speech-to-text вернул пустой ответ.";
+                    return string.Empty;
+                }
+
+                StatusSummary = $"{displayName} готов.";
+                return transcript.Trim();
+            }
+            catch (OperationCanceledException)
+            {
+                StatusSummary = "Распознавание отменено.";
+                return string.Empty;
+            }
+            catch (Exception exception)
+            {
+                StatusSummary = $"Ошибка Speech-to-text: {exception.Message}";
+                return string.Empty;
+            }
+        }
+
+        private static string ExtractTranscript(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return string.Empty;
+            }
+
+            var response = JsonUtility.FromJson<WhisperTranscriptionResponse>(json);
+            if (response != null && !string.IsNullOrWhiteSpace(response.text))
+            {
+                return response.text;
+            }
+
+            return json.Trim();
+        }
+
+        private static string BuildHttpFailureStatus(UnityWebRequest webRequest)
+        {
+            if (!string.IsNullOrWhiteSpace(webRequest.error))
+            {
+                return $"Ошибка Speech-to-text: {webRequest.error} (HTTP {webRequest.responseCode}).";
+            }
+
+            return $"Speech-to-text вернул HTTP {webRequest.responseCode}.";
+        }
+
+        private static Task SendWebRequestAsync(UnityWebRequest webRequest, CancellationToken cancellationToken)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            var operation = webRequest.SendWebRequest();
+            operation.completed += _ => taskCompletionSource.TrySetResult(true);
+
+            if (cancellationToken.CanBeCanceled)
+            {
+                cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken));
+            }
+
+            return taskCompletionSource.Task;
+        }
+
+        [Serializable]
+        private sealed class WhisperTranscriptionResponse
+        {
+            public string text;
+        }
+    }
+
+    public class HttpTextToSpeechService : MonoBehaviour, ITextToSpeechService
+    {
+        [SerializeField] private string displayName = "TTS HTTP";
+        [SerializeField] private bool useAsPrimaryBackend = true;
+        [SerializeField] private string baseUrl = "http://127.0.0.1:8082";
+        [SerializeField] private string synthesisPath = "/v1/audio/speech";
+        [SerializeField] private string modelName = "tts-1";
+        [SerializeField] private int requestTimeoutSeconds = 120;
+
+        public string DisplayName => displayName;
+
+        public string StatusSummary { get; private set; } = "Text-to-speech backend отключён.";
+
+        public bool IsConfigured => useAsPrimaryBackend && !string.IsNullOrWhiteSpace(baseUrl);
+
+        public async Task<AudioClip> SynthesizeAsync(string text, string voiceId, CancellationToken cancellationToken)
+        {
+            if (!IsConfigured)
+            {
+                StatusSummary = useAsPrimaryBackend
+                    ? "Text-to-speech backend не настроен. Укажи baseUrl."
+                    : "Text-to-speech backend отключён.";
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                StatusSummary = "Text-to-speech получил пустой текст.";
+                return null;
+            }
+
+            var endpoint = baseUrl.TrimEnd('/') + synthesisPath;
+            var payload = new SynthesisRequest
+            {
+                model = modelName,
+                input = text.Trim(),
+                voice = string.IsNullOrWhiteSpace(voiceId) ? "default" : voiceId.Trim(),
+                response_format = "wav"
+            };
+
+            var json = JsonUtility.ToJson(payload);
+            using var webRequest = new UnityWebRequest(endpoint, UnityWebRequest.kHttpVerbPOST);
+            webRequest.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.timeout = requestTimeoutSeconds;
+
+            using var registration = cancellationToken.Register(() => webRequest.Abort());
+
+            try
+            {
+                StatusSummary = $"Отправка текста в {displayName}...";
+                await SendWebRequestAsync(webRequest, cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    StatusSummary = "Озвучивание отменено.";
+                    return null;
+                }
+
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    StatusSummary = BuildHttpFailureStatus(webRequest);
+                    return null;
+                }
+
+                var clip = WavUtility.ToAudioClip(webRequest.downloadHandler.data, "npc_tts");
+                if (clip == null)
+                {
+                    StatusSummary = "Text-to-speech вернул пустой аудиопоток.";
+                    return null;
+                }
+
+                StatusSummary = $"{displayName} готов.";
+                return clip;
+            }
+            catch (OperationCanceledException)
+            {
+                StatusSummary = "Озвучивание отменено.";
+                return null;
+            }
+            catch (Exception exception)
+            {
+                StatusSummary = $"Ошибка Text-to-speech: {exception.Message}";
+                return null;
+            }
+        }
+
+        private static string BuildHttpFailureStatus(UnityWebRequest webRequest)
+        {
+            if (!string.IsNullOrWhiteSpace(webRequest.error))
+            {
+                return $"Ошибка Text-to-speech: {webRequest.error} (HTTP {webRequest.responseCode}).";
+            }
+
+            return $"Text-to-speech вернул HTTP {webRequest.responseCode}.";
+        }
+
+        private static Task SendWebRequestAsync(UnityWebRequest webRequest, CancellationToken cancellationToken)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            var operation = webRequest.SendWebRequest();
+            operation.completed += _ => taskCompletionSource.TrySetResult(true);
+
+            if (cancellationToken.CanBeCanceled)
+            {
+                cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken));
+            }
+
+            return taskCompletionSource.Task;
+        }
+
+        [Serializable]
+        private sealed class SynthesisRequest
+        {
+            public string model;
+            public string input;
+            public string voice;
+            public string response_format;
+        }
+    }
+
+    public static class WavUtility
+    {
+        public static AudioClip ToAudioClip(byte[] wavData, string clipName)
+        {
+            if (wavData == null || wavData.Length < 44)
+            {
+                return null;
+            }
+
+            using var stream = new MemoryStream(wavData);
+            using var reader = new BinaryReader(stream);
+
+            if (ReadString(reader, 4) != "RIFF")
+            {
+                return null;
+            }
+
+            reader.ReadInt32();
+            if (ReadString(reader, 4) != "WAVE")
+            {
+                return null;
+            }
+
+            if (ReadString(reader, 4) != "fmt ")
+            {
+                return null;
+            }
+
+            var fmtChunkSize = reader.ReadInt32();
+            var audioFormat = reader.ReadInt16();
+            var channels = reader.ReadInt16();
+            var frequency = reader.ReadInt32();
+            reader.ReadInt32();
+            reader.ReadInt16();
+            var bitsPerSample = reader.ReadInt16();
+
+            if (fmtChunkSize > 16)
+            {
+                stream.Position += fmtChunkSize - 16;
+            }
+
+            while (stream.Position < stream.Length - 8)
+            {
+                var chunkName = ReadString(reader, 4);
+                var chunkSize = reader.ReadInt32();
+                if (chunkName == "data")
+                {
+                    if (audioFormat != 1 || bitsPerSample != 16)
+                    {
+                        return null;
+                    }
+
+                    var sampleCount = chunkSize / sizeof(short);
+                    var samples = new float[sampleCount];
+                    for (var index = 0; index < sampleCount; index++)
+                    {
+                        samples[index] = reader.ReadInt16() / (float)short.MaxValue;
+                    }
+
+                    var clip = AudioClip.Create(clipName ?? "clip", sampleCount / channels, channels, frequency, false);
+                    clip.SetData(samples, 0);
+                    return clip;
+                }
+
+                stream.Position += chunkSize;
+            }
+
+            return null;
+        }
+
+        private static string ReadString(BinaryReader reader, int length)
+        {
+            return System.Text.Encoding.ASCII.GetString(reader.ReadBytes(length));
         }
     }
 }

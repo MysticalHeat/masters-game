@@ -17,6 +17,7 @@ namespace MastersGame.UI
         [SerializeField] private RectTransform messageContainer;
         [SerializeField] private TMP_InputField inputField;
         [SerializeField] private Button sendButton;
+        [SerializeField] private Button microphoneButton;
         [SerializeField] private Button closeButton;
 
         [Header("Bubble Style")]
@@ -36,6 +37,8 @@ namespace MastersGame.UI
 
         public event Action<string> SendRequested;
 
+        public event Action VoiceInputRequested;
+
         public event Action CloseRequested;
 
         private RectTransform streamingMessageRow;
@@ -50,6 +53,7 @@ namespace MastersGame.UI
             RectTransform messagesContainer,
             TMP_InputField field,
             Button send,
+            Button microphone,
             Button close)
         {
             titleLabel = title;
@@ -58,12 +62,18 @@ namespace MastersGame.UI
             messageContainer = messagesContainer;
             inputField = field;
             sendButton = send;
+            microphoneButton = microphone;
             closeButton = close;
         }
 
         private void Awake()
         {
             sendButton.onClick.AddListener(SubmitDraft);
+            if (microphoneButton != null)
+            {
+                microphoneButton.onClick.AddListener(HandleMicrophoneClicked);
+            }
+
             closeButton.onClick.AddListener(() => CloseRequested?.Invoke());
         }
 
@@ -110,6 +120,39 @@ namespace MastersGame.UI
             if (inputField != null)
             {
                 inputField.interactable = !busy;
+            }
+        }
+
+        public void SetVoiceState(bool isRecording, bool isProcessing, bool isSpeaking)
+        {
+            if (microphoneButton != null)
+            {
+                microphoneButton.interactable = !isProcessing && !isSpeaking;
+                microphoneButton.GetComponentInChildren<TextMeshProUGUI>()?.SetText(isRecording ? "Stop" : "Mic");
+            }
+
+            if (statusLabel != null)
+            {
+                if (isRecording)
+                {
+                    statusLabel.text = "Слушаю...";
+                }
+                else if (isProcessing)
+                {
+                    statusLabel.text = "Распознаю речь...";
+                }
+                else if (isSpeaking)
+                {
+                    statusLabel.text = "NPC говорит...";
+                }
+            }
+        }
+
+        public void SetMicrophoneInteractable(bool interactable)
+        {
+            if (microphoneButton != null)
+            {
+                microphoneButton.interactable = interactable;
             }
         }
 
@@ -313,6 +356,11 @@ namespace MastersGame.UI
 
             inputField.text = string.Empty;
             SendRequested?.Invoke(draft);
+        }
+
+        private void HandleMicrophoneClicked()
+        {
+            VoiceInputRequested?.Invoke();
         }
 
         private void ClearMessages()

@@ -107,4 +107,5 @@ InitTestScene*.unity*
 
 .venv-models
 Assets/Models/Qwen/
+Assets/Models/NPC_Guard/source/
 tools

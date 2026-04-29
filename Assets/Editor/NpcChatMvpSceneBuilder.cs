@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MastersGame.AI;
@@ -33,6 +34,7 @@ namespace MastersGame.Editor
             public ChatWindowController Window;
             public InteractionPromptView Prompt;
             public PlayerHudController Hud;
+            public Button MicrophoneButton;
         }
 
         [MenuItem("Tools/LLM Chat/Create MVP Scene")]
@@ -58,6 +60,10 @@ namespace MastersGame.Editor
             var llamaModel = systems.AddComponent<LlamaCppHttpLanguageModel>();
             var sentisModel = systems.AddComponent<SentisLocalLanguageModel>();
             var stubModel = systems.AddComponent<StubLocalLanguageModel>();
+            var voiceController = AddComponentByName(systems, "MastersGame.Gameplay.NpcVoiceChatController");
+            var microphoneRecorder = AddComponentByName(systems, "MastersGame.Voice.MicrophoneRecorder");
+            var speechToText = AddComponentByName(systems, "MastersGame.Voice.WhisperHttpSpeechToText");
+            var textToSpeech = AddComponentByName(systems, "MastersGame.Voice.HttpTextToSpeechService");
             llamaModel.Configure("http://127.0.0.1:8080", "qwen", true);
             sentisModel.modelAsset = AssetDatabase.LoadAssetAtPath<ModelAsset>("Assets/Models/Qwen/model.onnx");
             sentisModel.tokenizerJson = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Models/Qwen/tokenizer.json");
@@ -69,6 +75,7 @@ namespace MastersGame.Editor
             gameManager.Configure(player.Controller, chatBundle.Window, llamaModel, sentisModel, stubModel);
             gameManager.SetWorldStateSources(player.Health, dayNightCycle);
             player.Interaction.Configure(gameManager, chatBundle.Prompt);
+            InvokeConfigure(voiceController, "Configure", gameManager, chatBundle.Window, microphoneRecorder, speechToText, textToSpeech);
             dayNightCycle.Configure(sunLight, player.Controller.PlayerCamera);
             chatBundle.Hud.Bind(player.Health);
             chatBundle.Hud.BindTimeOfDay(dayNightCycle);
@@ -167,7 +174,7 @@ namespace MastersGame.Editor
             visual.transform.SetParent(root.transform, false);
             visual.transform.localPosition = new Vector3(0f, 0.9f, 0f);
             visual.transform.localScale = new Vector3(0.8f, 0.9f, 0.8f);
-            Object.DestroyImmediate(visual.GetComponent<Collider>());
+            UnityEngine.Object.DestroyImmediate(visual.GetComponent<Collider>());
             SetRendererColor(visual, new Color(0.3f, 0.44f, 0.64f));
 
             var cameraPitchRoot = new GameObject("CameraPitchRoot");
@@ -197,15 +204,21 @@ namespace MastersGame.Editor
 
         private static NpcChatTarget CreateNpc()
         {
-            var npc = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            npc.name = "NPC_Archivist";
+            var npc = new GameObject("NPC_Eldrik");
             npc.transform.position = new Vector3(0f, 1f, 4f);
-            SetRendererColor(npc, new Color(0.72f, 0.58f, 0.24f));
 
             var trigger = npc.AddComponent<SphereCollider>();
             trigger.radius = 2.6f;
             trigger.center = new Vector3(0f, 0.9f, 0f);
             trigger.isTrigger = true;
+
+            var voiceAudioSource = npc.AddComponent<AudioSource>();
+            voiceAudioSource.playOnAwake = false;
+            voiceAudioSource.spatialBlend = 1f;
+            voiceAudioSource.rolloffMode = AudioRolloffMode.Linear;
+            voiceAudioSource.maxDistance = 12f;
+
+            CreateNpcVisual(npc);
 
             var target = npc.AddComponent<NpcChatTarget>();
             target.Configure(
@@ -213,8 +226,43 @@ namespace MastersGame.Editor
                 "Ты — Элдрик, уставший стражник города Рифт. Ты ненавидишь магию, любишь крепкий эль, говоришь грубо, коротко и недоверчиво. Ты сторожишь ворота и улицы по ночам, презираешь пустую болтовню и замечаешь кровь, слабость, страх и странности в людях раньше, чем сами слова. Если видишь, что человек тяжело ранен или едва держится на ногах, ты первым делом рявкаешь об этом, а не обмениваешься любезностями. Для тебя раненый ночью на улице — почти готовый труп или источник trouble, и ты реагируешь на это сразу. Никогда не выходи из роли стражника и отвечай как житель этого мира.",
                 "Стой. Если есть дело — говори быстро. Если дела нет, не путайся под ногами.",
                 "Press E / Interact to talk");
+            target.ConfigureVoice(voiceAudioSource, "default");
 
             return target;
+        }
+
+        private static void CreateNpcVisual(GameObject npc)
+        {
+            var modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/NPC_Guard/source/Knighty92.blend");
+            if (modelAsset != null)
+            {
+                var visual = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
+                visual.name = "Visual";
+                visual.transform.SetParent(npc.transform, false);
+                visual.transform.localPosition = Vector3.zero;
+                visual.transform.localRotation = Quaternion.identity;
+                visual.transform.localScale = Vector3.one;
+
+                foreach (var collider in visual.GetComponentsInChildren<Collider>(true))
+                {
+                    UnityEngine.Object.DestroyImmediate(collider);
+                }
+
+                foreach (var rigidbody in visual.GetComponentsInChildren<Rigidbody>(true))
+                {
+                    UnityEngine.Object.DestroyImmediate(rigidbody);
+                }
+
+                return;
+            }
+
+            var fallbackVisual = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            fallbackVisual.name = "Visual";
+            fallbackVisual.transform.SetParent(npc.transform, false);
+            fallbackVisual.transform.localPosition = new Vector3(0f, 0.9f, 0f);
+            fallbackVisual.transform.localScale = new Vector3(0.8f, 0.9f, 0.8f);
+            UnityEngine.Object.DestroyImmediate(fallbackVisual.GetComponent<Collider>());
+            SetRendererColor(fallbackVisual, new Color(0.72f, 0.58f, 0.24f));
         }
 
         private static ChatBundle CreateUi()
@@ -333,12 +381,17 @@ namespace MastersGame.Editor
             inputFieldElement.flexibleWidth = 1f;
             inputFieldElement.minWidth = 100f;
 
+            var microphoneButton = CreateTmpButton("MicrophoneButton", inputBar, "Mic", new Color(0.30f, 0.23f, 0.58f, 1f));
+            var microphoneElement = microphoneButton.gameObject.AddComponent<LayoutElement>();
+            microphoneElement.preferredWidth = 66f;
+            microphoneElement.flexibleWidth = 0f;
+
             var sendButton = CreateTmpButton("SendButton", inputBar, "Send", new Color(0.20f, 0.45f, 0.65f, 1f));
             var sendElement = sendButton.gameObject.AddComponent<LayoutElement>();
             sendElement.preferredWidth = 72f;
             sendElement.flexibleWidth = 0f;
 
-            chatWindow.Configure(title, status, scrollRect, contentRect, inputField, sendButton, closeButton);
+            chatWindow.Configure(title, status, scrollRect, contentRect, inputField, sendButton, microphoneButton, closeButton);
             panel.gameObject.SetActive(false);
 
             var promptCanvasObject = new GameObject("PromptCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -371,7 +424,8 @@ namespace MastersGame.Editor
             {
                 Window = chatWindow,
                 Prompt = promptView,
-                Hud = playerHud
+                Hud = playerHud,
+                MicrophoneButton = microphoneButton
             };
         }
 
@@ -475,6 +529,37 @@ namespace MastersGame.Editor
 
             currentScenes.Add(new EditorBuildSettingsScene(scenePath, true));
             EditorBuildSettings.scenes = currentScenes.ToArray();
+        }
+
+        private static Component AddComponentByName(GameObject target, string typeName)
+        {
+            var componentType = FindType(typeName);
+            return componentType != null ? target.AddComponent(componentType) : null;
+        }
+
+        private static Type FindType(string typeName)
+        {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                var type = assembly.GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            return null;
+        }
+
+        private static void InvokeConfigure(Component component, string methodName, params object[] args)
+        {
+            if (component == null)
+            {
+                return;
+            }
+
+            var method = component.GetType().GetMethod(methodName);
+            method?.Invoke(component, args);
         }
 
         private static void CreateWall(string objectName, Vector3 position, Vector3 scale)

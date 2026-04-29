@@ -1,0 +1,520 @@
+fileFormatVersion: 2
+guid: 6db66b24a93dcca10a1403e861da2480
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5493092854180847320
+    second: Main_DifuseBAKE_0
+  - first:
+      213: -7578728863317428568
+    second: Main_DifuseBAKE_1
+  - first:
+      213: -4914653971649752016
+    second: Main_DifuseBAKE_2
+  - first:
+      213: -5341491850856469834
+    second: Main_DifuseBAKE_3
+  - first:
+      213: -6388832122918925957
+    second: Main_DifuseBAKE_4
+  - first:
+      213: -1044354252468733071
+    second: Main_DifuseBAKE_5
+  - first:
+      213: -3048156120283826398
+    second: Main_DifuseBAKE_6
+  - first:
+      213: -5857014852463090611
+    second: Main_DifuseBAKE_7
+  - first:
+      213: 3563159909850644699
+    second: Main_DifuseBAKE_8
+  - first:
+      213: -1233647149846089481
+    second: Main_DifuseBAKE_9
+  - first:
+      213: -2856591113043482
+    second: Main_DifuseBAKE_10
+  - first:
+      213: 5241251582540195617
+    second: Main_DifuseBAKE_11
+  - first:
+      213: 6465501582327838030
+    second: Main_DifuseBAKE_12
+  - first:
+      213: -43402928279879688
+    second: Main_DifuseBAKE_13
+  - first:
+      213: -4222126428833609177
+    second: Main_DifuseBAKE_14
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1640
+        height: 2048
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 821605c172d94c3b0800000000000000
+      internalID: -5493092854180847320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_1
+      rect:
+        serializedVersion: 2
+        x: 1361
+        y: 1312
+        width: 332
+        height: 360
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a6f6fca042f2d690800000000000000
+      internalID: -7578728863317428568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_2
+      rect:
+        serializedVersion: 2
+        x: 1421
+        y: 1569
+        width: 583
+        height: 479
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0349ad17044abcbb0800000000000000
+      internalID: -4914653971649752016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_3
+      rect:
+        serializedVersion: 2
+        x: 1974
+        y: 1579
+        width: 66
+        height: 297
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ba6e0b46753fd5b0800000000000000
+      internalID: -5341491850856469834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_4
+      rect:
+        serializedVersion: 2
+        x: 1545
+        y: 790
+        width: 318
+        height: 550
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7900df980f4657a0800000000000000
+      internalID: -6388832122918925957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_5
+      rect:
+        serializedVersion: 2
+        x: 1699
+        y: 1325
+        width: 241
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17bbee13755b181f0800000000000000
+      internalID: -1044354252468733071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_6
+      rect:
+        serializedVersion: 2
+        x: 1748
+        y: 1144
+        width: 250
+        height: 205
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 227bc8e8826c2b5d0800000000000000
+      internalID: -3048156120283826398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_7
+      rect:
+        serializedVersion: 2
+        x: 1925
+        y: 1306
+        width: 114
+        height: 264
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4420c20604b7bea0800000000000000
+      internalID: -5857014852463090611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_8
+      rect:
+        serializedVersion: 2
+        x: 1727
+        y: 992
+        width: 269
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd08f804f03e27130800000000000000
+      internalID: 3563159909850644699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_9
+      rect:
+        serializedVersion: 2
+        x: 1761
+        y: 782
+        width: 258
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f0304f047431eee0800000000000000
+      internalID: -1233647149846089481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_10
+      rect:
+        serializedVersion: 2
+        x: 1591
+        y: 85
+        width: 400
+        height: 536
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e1407d02f9d5fff0800000000000000
+      internalID: -2856591113043482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_11
+      rect:
+        serializedVersion: 2
+        x: 1653
+        y: 621
+        width: 320
+        height: 154
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12723c38b8aacb840800000000000000
+      internalID: 5241251582540195617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_12
+      rect:
+        serializedVersion: 2
+        x: 1965
+        y: 290
+        width: 81
+        height: 439
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e457065fe631ab950800000000000000
+      internalID: 6465501582327838030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_13
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 0
+        width: 221
+        height: 564
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ff7aa5444dc56ff0800000000000000
+      internalID: -43402928279879688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Main_DifuseBAKE_14
+      rect:
+        serializedVersion: 2
+        x: 1668
+        y: 0
+        width: 366
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72a859cf16ef765c0800000000000000
+      internalID: -4222126428833609177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Main_DifuseBAKE_0: -5493092854180847320
+      Main_DifuseBAKE_1: -7578728863317428568
+      Main_DifuseBAKE_10: -2856591113043482
+      Main_DifuseBAKE_11: 5241251582540195617
+      Main_DifuseBAKE_12: 6465501582327838030
+      Main_DifuseBAKE_13: -43402928279879688
+      Main_DifuseBAKE_14: -4222126428833609177
+      Main_DifuseBAKE_2: -4914653971649752016
+      Main_DifuseBAKE_3: -5341491850856469834
+      Main_DifuseBAKE_4: -6388832122918925957
+      Main_DifuseBAKE_5: -1044354252468733071
+      Main_DifuseBAKE_6: -3048156120283826398
+      Main_DifuseBAKE_7: -5857014852463090611
+      Main_DifuseBAKE_8: 3563159909850644699
+      Main_DifuseBAKE_9: -1233647149846089481
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

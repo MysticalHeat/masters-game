@@ -1,0 +1,1066 @@
+fileFormatVersion: 2
+guid: 89e07061d1ccbdc99aed920b5372eaf8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8735659073796732586
+    second: RoughnessBAKE_0
+  - first:
+      213: 7790498616534293063
+    second: RoughnessBAKE_1
+  - first:
+      213: -3503210651512947365
+    second: RoughnessBAKE_2
+  - first:
+      213: -7702645995349054981
+    second: RoughnessBAKE_3
+  - first:
+      213: -1841416517014506088
+    second: RoughnessBAKE_4
+  - first:
+      213: 2538034801043402083
+    second: RoughnessBAKE_5
+  - first:
+      213: 8913213710819995427
+    second: RoughnessBAKE_6
+  - first:
+      213: 2177852263876047763
+    second: RoughnessBAKE_7
+  - first:
+      213: -951235997932274476
+    second: RoughnessBAKE_8
+  - first:
+      213: 5647794837526705022
+    second: RoughnessBAKE_9
+  - first:
+      213: -7149592568275395283
+    second: RoughnessBAKE_10
+  - first:
+      213: 7876583982365693522
+    second: RoughnessBAKE_11
+  - first:
+      213: -3278478388366340871
+    second: RoughnessBAKE_12
+  - first:
+      213: -265218245971106925
+    second: RoughnessBAKE_13
+  - first:
+      213: 7792553317622329707
+    second: RoughnessBAKE_14
+  - first:
+      213: -9062554123501116181
+    second: RoughnessBAKE_15
+  - first:
+      213: -8247665861369173929
+    second: RoughnessBAKE_16
+  - first:
+      213: 8242238093704596814
+    second: RoughnessBAKE_17
+  - first:
+      213: 1824285789505196548
+    second: RoughnessBAKE_18
+  - first:
+      213: -331991553715160676
+    second: RoughnessBAKE_19
+  - first:
+      213: -4496494095288543421
+    second: RoughnessBAKE_20
+  - first:
+      213: -6052087721032584153
+    second: RoughnessBAKE_21
+  - first:
+      213: -7717510970834658062
+    second: RoughnessBAKE_22
+  - first:
+      213: 7442938920777585756
+    second: RoughnessBAKE_23
+  - first:
+      213: 8442900376927139555
+    second: RoughnessBAKE_24
+  - first:
+      213: -2194631310181513139
+    second: RoughnessBAKE_25
+  - first:
+      213: 594960405036720536
+    second: RoughnessBAKE_26
+  - first:
+      213: -1112900369959615207
+    second: RoughnessBAKE_27
+  - first:
+      213: 2596437305640164727
+    second: RoughnessBAKE_28
+  - first:
+      213: 8306976372756732682
+    second: RoughnessBAKE_29
+  - first:
+      213: 1729903892717515809
+    second: RoughnessBAKE_30
+  - first:
+      213: 5060249544163182138
+    second: RoughnessBAKE_31
+  - first:
+      213: -7311674614665248818
+    second: RoughnessBAKE_32
+  - first:
+      213: -6370509376600594827
+    second: RoughnessBAKE_33
+  - first:
+      213: 6969728320226041739
+    second: RoughnessBAKE_34
+  - first:
+      213: -5295424179785857968
+    second: RoughnessBAKE_35
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RoughnessBAKE_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1691
+        width: 366
+        height: 357
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa67294e4ab4b3970800000000000000
+      internalID: 8735659073796732586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_1
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 1914
+        width: 108
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74ad2b547396d1c60800000000000000
+      internalID: 7790498616534293063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_2
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 1769
+        width: 217
+        height: 279
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5db4372978126fc0800000000000000
+      internalID: -3503210651512947365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_3
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 0
+        width: 746
+        height: 1925
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf962a01744ba1590800000000000000
+      internalID: -7702645995349054981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_4
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 1791
+        width: 165
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89530db1f69f176e0800000000000000
+      internalID: -1841416517014506088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_5
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 1918
+        width: 101
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36d65c75439e83320800000000000000
+      internalID: 2538034801043402083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_6
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 1777
+        width: 235
+        height: 271
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32f219055a812bb70800000000000000
+      internalID: 8913213710819995427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_7
+      rect:
+        serializedVersion: 2
+        x: 1057
+        y: 1789
+        width: 109
+        height: 259
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 393bc916819493e10800000000000000
+      internalID: 2177852263876047763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_8
+      rect:
+        serializedVersion: 2
+        x: 1167
+        y: 1781
+        width: 102
+        height: 251
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dcbea556e78cc2f0800000000000000
+      internalID: -951235997932274476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_9
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 1531
+        width: 141
+        height: 482
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e73701f3b7ff06e40800000000000000
+      internalID: 5647794837526705022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_10
+      rect:
+        serializedVersion: 2
+        x: 1423
+        y: 1571
+        width: 579
+        height: 477
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2d1c27707b87cc90800000000000000
+      internalID: -7149592568275395283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_11
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1432
+        width: 318
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2565078666f3f4d60800000000000000
+      internalID: 7876583982365693522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_12
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 1609
+        width: 55
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fc01a1a6418082d0800000000000000
+      internalID: -3278478388366340871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_13
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 804
+        width: 452
+        height: 997
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 393a0f41961c15cf0800000000000000
+      internalID: -265218245971106925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_14
+      rect:
+        serializedVersion: 2
+        x: 1363
+        y: 1314
+        width: 328
+        height: 356
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b61bb26a4f5b42c60800000000000000
+      internalID: 7792553317622329707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_15
+      rect:
+        serializedVersion: 2
+        x: 1976
+        y: 1581
+        width: 62
+        height: 293
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be4e6f64a075b3280800000000000000
+      internalID: -9062554123501116181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_16
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 966
+        width: 402
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75869fad8976a8d80800000000000000
+      internalID: -8247665861369173929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_17
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 1370
+        width: 88
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4d847180ef426270800000000000000
+      internalID: 8242238093704596814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_18
+      rect:
+        serializedVersion: 2
+        x: 1701
+        y: 1327
+        width: 237
+        height: 249
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4021044924a215910800000000000000
+      internalID: 1824285789505196548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_19
+      rect:
+        serializedVersion: 2
+        x: 1927
+        y: 1308
+        width: 110
+        height: 260
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c99b06cd077846bf0800000000000000
+      internalID: -331991553715160676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_20
+      rect:
+        serializedVersion: 2
+        x: 1364
+        y: 826
+        width: 222
+        height: 533
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3475fab917e3991c0800000000000000
+      internalID: -4496494095288543421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_21
+      rect:
+        serializedVersion: 2
+        x: 1555
+        y: 792
+        width: 306
+        height: 546
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7247956784aa20ca0800000000000000
+      internalID: -6052087721032584153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_22
+      rect:
+        serializedVersion: 2
+        x: 1750
+        y: 1146
+        width: 246
+        height: 201
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fc583149a4e5e490800000000000000
+      internalID: -7717510970834658062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_23
+      rect:
+        serializedVersion: 2
+        x: 1729
+        y: 994
+        width: 265
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5490e99381aa4760800000000000000
+      internalID: 7442938920777585756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6
+        width: 512
+        height: 955
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e6f0c019253b2570800000000000000
+      internalID: 8442900376927139555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_25
+      rect:
+        serializedVersion: 2
+        x: 1355
+        y: 759
+        width: 51
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d484ea7737a1b81e0800000000000000
+      internalID: -2194631310181513139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_26
+      rect:
+        serializedVersion: 2
+        x: 1410
+        y: 568
+        width: 228
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 891e2ad0659b14800800000000000000
+      internalID: 594960405036720536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_27
+      rect:
+        serializedVersion: 2
+        x: 1547
+        y: 795
+        width: 205
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 915082a820f2e80f0800000000000000
+      internalID: -1112900369959615207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_28
+      rect:
+        serializedVersion: 2
+        x: 1763
+        y: 784
+        width: 254
+        height: 192
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77d114419f5680420800000000000000
+      internalID: 2596437305640164727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_29
+      rect:
+        serializedVersion: 2
+        x: 1077
+        y: 392
+        width: 355
+        height: 387
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0b5abfaffe484370800000000000000
+      internalID: 8306976372756732682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_30
+      rect:
+        serializedVersion: 2
+        x: 1655
+        y: 623
+        width: 316
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1243efccc6ad10810800000000000000
+      internalID: 1729903892717515809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_31
+      rect:
+        serializedVersion: 2
+        x: 1967
+        y: 292
+        width: 77
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a36cdaa662e993640800000000000000
+      internalID: 5060249544163182138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_32
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 0
+        width: 401
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecff2a74da6b78a90800000000000000
+      internalID: -7311674614665248818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_33
+      rect:
+        serializedVersion: 2
+        x: 1466
+        y: 0
+        width: 217
+        height: 562
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5762d6179776797a0800000000000000
+      internalID: -6370509376600594827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_34
+      rect:
+        serializedVersion: 2
+        x: 1593
+        y: 87
+        width: 396
+        height: 532
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8f9d04eaf279b060800000000000000
+      internalID: 6969728320226041739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RoughnessBAKE_35
+      rect:
+        serializedVersion: 2
+        x: 1670
+        y: 0
+        width: 362
+        height: 314
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05489dcc3cfd286b0800000000000000
+      internalID: -5295424179785857968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RoughnessBAKE_0: 8735659073796732586
+      RoughnessBAKE_1: 7790498616534293063
+      RoughnessBAKE_10: -7149592568275395283
+      RoughnessBAKE_11: 7876583982365693522
+      RoughnessBAKE_12: -3278478388366340871
+      RoughnessBAKE_13: -265218245971106925
+      RoughnessBAKE_14: 7792553317622329707
+      RoughnessBAKE_15: -9062554123501116181
+      RoughnessBAKE_16: -8247665861369173929
+      RoughnessBAKE_17: 8242238093704596814
+      RoughnessBAKE_18: 1824285789505196548
+      RoughnessBAKE_19: -331991553715160676
+      RoughnessBAKE_2: -3503210651512947365
+      RoughnessBAKE_20: -4496494095288543421
+      RoughnessBAKE_21: -6052087721032584153
+      RoughnessBAKE_22: -7717510970834658062
+      RoughnessBAKE_23: 7442938920777585756
+      RoughnessBAKE_24: 8442900376927139555
+      RoughnessBAKE_25: -2194631310181513139
+      RoughnessBAKE_26: 594960405036720536
+      RoughnessBAKE_27: -1112900369959615207
+      RoughnessBAKE_28: 2596437305640164727
+      RoughnessBAKE_29: 8306976372756732682
+      RoughnessBAKE_3: -7702645995349054981
+      RoughnessBAKE_30: 1729903892717515809
+      RoughnessBAKE_31: 5060249544163182138
+      RoughnessBAKE_32: -7311674614665248818
+      RoughnessBAKE_33: -6370509376600594827
+      RoughnessBAKE_34: 6969728320226041739
+      RoughnessBAKE_35: -5295424179785857968
+      RoughnessBAKE_4: -1841416517014506088
+      RoughnessBAKE_5: 2538034801043402083
+      RoughnessBAKE_6: 8913213710819995427
+      RoughnessBAKE_7: 2177852263876047763
+      RoughnessBAKE_8: -951235997932274476
+      RoughnessBAKE_9: 5647794837526705022
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

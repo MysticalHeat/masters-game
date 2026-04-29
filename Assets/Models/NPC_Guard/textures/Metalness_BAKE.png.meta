@@ -1,0 +1,1066 @@
+fileFormatVersion: 2
+guid: 31f9b59f1a3d7758ea9b0498d0f97749
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 213853310865046401
+    second: Metalness_BAKE_0
+  - first:
+      213: -534303950723560597
+    second: Metalness_BAKE_1
+  - first:
+      213: 8919274118660298649
+    second: Metalness_BAKE_2
+  - first:
+      213: 3931042826128075113
+    second: Metalness_BAKE_3
+  - first:
+      213: -3695347048316053137
+    second: Metalness_BAKE_4
+  - first:
+      213: -4288671090249732372
+    second: Metalness_BAKE_5
+  - first:
+      213: 4487738003262599394
+    second: Metalness_BAKE_6
+  - first:
+      213: -2455273470293137073
+    second: Metalness_BAKE_7
+  - first:
+      213: -7389594944437755796
+    second: Metalness_BAKE_8
+  - first:
+      213: -1094487738196746597
+    second: Metalness_BAKE_9
+  - first:
+      213: 5886166094562028248
+    second: Metalness_BAKE_10
+  - first:
+      213: 8491104236635388486
+    second: Metalness_BAKE_11
+  - first:
+      213: 4988738339410681350
+    second: Metalness_BAKE_12
+  - first:
+      213: -7354229348055618191
+    second: Metalness_BAKE_13
+  - first:
+      213: 2657130703265504523
+    second: Metalness_BAKE_14
+  - first:
+      213: 6649800109335243172
+    second: Metalness_BAKE_15
+  - first:
+      213: -7783524962359852296
+    second: Metalness_BAKE_16
+  - first:
+      213: -5476730405685944988
+    second: Metalness_BAKE_17
+  - first:
+      213: -1567119162005537184
+    second: Metalness_BAKE_18
+  - first:
+      213: 1306218978644642087
+    second: Metalness_BAKE_19
+  - first:
+      213: -971594654221003707
+    second: Metalness_BAKE_20
+  - first:
+      213: -1793767007012751699
+    second: Metalness_BAKE_21
+  - first:
+      213: 5298894244983507038
+    second: Metalness_BAKE_22
+  - first:
+      213: 6669089161411719139
+    second: Metalness_BAKE_23
+  - first:
+      213: 6641676124288995911
+    second: Metalness_BAKE_24
+  - first:
+      213: 5123476563516954091
+    second: Metalness_BAKE_25
+  - first:
+      213: -3955065629327065134
+    second: Metalness_BAKE_26
+  - first:
+      213: -9132408953245126554
+    second: Metalness_BAKE_27
+  - first:
+      213: 2822447732273876348
+    second: Metalness_BAKE_28
+  - first:
+      213: -1400437088806864501
+    second: Metalness_BAKE_29
+  - first:
+      213: 6460950816081831310
+    second: Metalness_BAKE_30
+  - first:
+      213: -7746467532866939290
+    second: Metalness_BAKE_31
+  - first:
+      213: 2892460871159962439
+    second: Metalness_BAKE_32
+  - first:
+      213: -9077319582134763063
+    second: Metalness_BAKE_33
+  - first:
+      213: -3549166859983294893
+    second: Metalness_BAKE_34
+  - first:
+      213: 2194631695436098882
+    second: Metalness_BAKE_35
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Metalness_BAKE_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1691
+        width: 366
+        height: 357
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18bf6240472c7f200800000000000000
+      internalID: 213853310865046401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_1
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 1914
+        width: 108
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6bc80f3365c598f0800000000000000
+      internalID: -534303950723560597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_2
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 1769
+        width: 217
+        height: 279
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9971519fd80a7cb70800000000000000
+      internalID: 8919274118660298649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_3
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 0
+        width: 746
+        height: 1925
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96926307f9edd8630800000000000000
+      internalID: 3931042826128075113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_4
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 1791
+        width: 165
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f695557307d77bcc0800000000000000
+      internalID: -3695347048316053137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_5
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 1918
+        width: 101
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cee6d23ad549b74c0800000000000000
+      internalID: -4288671090249732372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_6
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 1777
+        width: 235
+        height: 271
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e0fc79dfe5a74e30800000000000000
+      internalID: 4487738003262599394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_7
+      rect:
+        serializedVersion: 2
+        x: 1057
+        y: 1789
+        width: 109
+        height: 259
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f49acb099cd1dedd0800000000000000
+      internalID: -2455273470293137073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_8
+      rect:
+        serializedVersion: 2
+        x: 1167
+        y: 1781
+        width: 102
+        height: 251
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c60e3cebc82e27990800000000000000
+      internalID: -7389594944437755796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_9
+      rect:
+        serializedVersion: 2
+        x: 1287
+        y: 1531
+        width: 141
+        height: 482
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9e13c173399fc0f0800000000000000
+      internalID: -1094487738196746597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_10
+      rect:
+        serializedVersion: 2
+        x: 1423
+        y: 1571
+        width: 579
+        height: 477
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8da615370ecdfa150800000000000000
+      internalID: 5886166094562028248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_11
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1432
+        width: 318
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64a777fb05676d570800000000000000
+      internalID: 8491104236635388486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_12
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 1609
+        width: 55
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60e12f5961f8b3540800000000000000
+      internalID: 4988738339410681350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_13
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 804
+        width: 452
+        height: 997
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17d64605f5780f990800000000000000
+      internalID: -7354229348055618191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_14
+      rect:
+        serializedVersion: 2
+        x: 1363
+        y: 1314
+        width: 328
+        height: 356
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0d9ce9eb4600e420800000000000000
+      internalID: 2657130703265504523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_15
+      rect:
+        serializedVersion: 2
+        x: 1976
+        y: 1581
+        width: 62
+        height: 293
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a9e740a7f5d84c50800000000000000
+      internalID: 6649800109335243172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_16
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 966
+        width: 402
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f2c72e194d5bf390800000000000000
+      internalID: -7783524962359852296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_17
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 1370
+        width: 88
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46d128686bebef3b0800000000000000
+      internalID: -5476730405685944988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_18
+      rect:
+        serializedVersion: 2
+        x: 1701
+        y: 1327
+        width: 237
+        height: 249
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06eb3f3dc69704ae0800000000000000
+      internalID: -1567119162005537184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_19
+      rect:
+        serializedVersion: 2
+        x: 1927
+        y: 1308
+        width: 110
+        height: 260
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 729ccfc8d3f902210800000000000000
+      internalID: 1306218978644642087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_20
+      rect:
+        serializedVersion: 2
+        x: 1364
+        y: 826
+        width: 222
+        height: 533
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5441d794fc33482f0800000000000000
+      internalID: -971594654221003707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_21
+      rect:
+        serializedVersion: 2
+        x: 1555
+        y: 792
+        width: 306
+        height: 546
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da6703139624b17e0800000000000000
+      internalID: -1793767007012751699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_22
+      rect:
+        serializedVersion: 2
+        x: 1750
+        y: 1146
+        width: 246
+        height: 201
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e588a96bd34798940800000000000000
+      internalID: 5298894244983507038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_23
+      rect:
+        serializedVersion: 2
+        x: 1729
+        y: 994
+        width: 265
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ef6a59024d5d8c50800000000000000
+      internalID: 6669089161411719139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6
+        width: 512
+        height: 955
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7425075fe39fb2c50800000000000000
+      internalID: 6641676124288995911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_25
+      rect:
+        serializedVersion: 2
+        x: 1355
+        y: 759
+        width: 51
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be597770ace3a1740800000000000000
+      internalID: 5123476563516954091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_26
+      rect:
+        serializedVersion: 2
+        x: 1410
+        y: 568
+        width: 228
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2df7a94d3c8cc19c0800000000000000
+      internalID: -3955065629327065134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_27
+      rect:
+        serializedVersion: 2
+        x: 1547
+        y: 795
+        width: 205
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6603a3e417a234180800000000000000
+      internalID: -9132408953245126554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_28
+      rect:
+        serializedVersion: 2
+        x: 1763
+        y: 784
+        width: 254
+        height: 192
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7d8a4f22495b2720800000000000000
+      internalID: 2822447732273876348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_29
+      rect:
+        serializedVersion: 2
+        x: 1077
+        y: 392
+        width: 355
+        height: 387
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b89726733e5a09ce0800000000000000
+      internalID: -1400437088806864501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_30
+      rect:
+        serializedVersion: 2
+        x: 1655
+        y: 623
+        width: 316
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e85e3df1988e9a950800000000000000
+      internalID: 6460950816081831310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_31
+      rect:
+        serializedVersion: 2
+        x: 1967
+        y: 292
+        width: 77
+        height: 435
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6669e5742d40f7490800000000000000
+      internalID: -7746467532866939290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_32
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 0
+        width: 401
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74bd43066d5142820800000000000000
+      internalID: 2892460871159962439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_33
+      rect:
+        serializedVersion: 2
+        x: 1466
+        y: 0
+        width: 217
+        height: 562
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c1092a0fe1e60280800000000000000
+      internalID: -9077319582134763063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_34
+      rect:
+        serializedVersion: 2
+        x: 1593
+        y: 87
+        width: 396
+        height: 532
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35e6b1e8b83debec0800000000000000
+      internalID: -3549166859983294893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Metalness_BAKE_35
+      rect:
+        serializedVersion: 2
+        x: 1670
+        y: 0
+        width: 362
+        height: 314
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24d284b36e5e47e10800000000000000
+      internalID: 2194631695436098882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Metalness_BAKE_0: 213853310865046401
+      Metalness_BAKE_1: -534303950723560597
+      Metalness_BAKE_10: 5886166094562028248
+      Metalness_BAKE_11: 8491104236635388486
+      Metalness_BAKE_12: 4988738339410681350
+      Metalness_BAKE_13: -7354229348055618191
+      Metalness_BAKE_14: 2657130703265504523
+      Metalness_BAKE_15: 6649800109335243172
+      Metalness_BAKE_16: -7783524962359852296
+      Metalness_BAKE_17: -5476730405685944988
+      Metalness_BAKE_18: -1567119162005537184
+      Metalness_BAKE_19: 1306218978644642087
+      Metalness_BAKE_2: 8919274118660298649
+      Metalness_BAKE_20: -971594654221003707
+      Metalness_BAKE_21: -1793767007012751699
+      Metalness_BAKE_22: 5298894244983507038
+      Metalness_BAKE_23: 6669089161411719139
+      Metalness_BAKE_24: 6641676124288995911
+      Metalness_BAKE_25: 5123476563516954091
+      Metalness_BAKE_26: -3955065629327065134
+      Metalness_BAKE_27: -9132408953245126554
+      Metalness_BAKE_28: 2822447732273876348
+      Metalness_BAKE_29: -1400437088806864501
+      Metalness_BAKE_3: 3931042826128075113
+      Metalness_BAKE_30: 6460950816081831310
+      Metalness_BAKE_31: -7746467532866939290
+      Metalness_BAKE_32: 2892460871159962439
+      Metalness_BAKE_33: -9077319582134763063
+      Metalness_BAKE_34: -3549166859983294893
+      Metalness_BAKE_35: 2194631695436098882
+      Metalness_BAKE_4: -3695347048316053137
+      Metalness_BAKE_5: -4288671090249732372
+      Metalness_BAKE_6: 4487738003262599394
+      Metalness_BAKE_7: -2455273470293137073
+      Metalness_BAKE_8: -7389594944437755796
+      Metalness_BAKE_9: -1094487738196746597
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

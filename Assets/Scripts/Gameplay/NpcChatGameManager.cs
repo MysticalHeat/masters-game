@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using MastersGame.AI;
 using MastersGame.UI;
 using TMPro;
@@ -32,7 +33,15 @@ namespace MastersGame.Gameplay
         private bool hasPendingStreamingUpdate;
         private string pendingStreamingText;
 
+        public event Action<NpcChatTarget, string> NpcReplyReady;
+
+        public event Action ConversationClosed;
+
         public bool ChatOpen { get; private set; }
+
+        public bool IsBusy => isBusy;
+
+        public NpcChatTarget CurrentNpc => currentNpc;
 
         public void Configure(PlayerController3D controller, ChatWindowController window, LlamaCppHttpLanguageModel llama, SentisLocalLanguageModel sentis, StubLocalLanguageModel stub)
         {
@@ -119,19 +128,26 @@ namespace MastersGame.Gameplay
                 playerController.SetInputEnabled(true);
                 playerController.SetCursorLocked(true);
             }
+
+            ConversationClosed?.Invoke();
         }
 
         private async void HandleSendRequested(string message)
         {
+            await SubmitPlayerMessageAsync(message).ConfigureAwait(true);
+        }
+
+        public async Task<string> SubmitPlayerMessageAsync(string message, CancellationToken cancellationToken = default)
+        {
             if (!ChatOpen || isBusy || currentNpc == null)
             {
-                return;
+                return null;
             }
 
             var trimmedMessage = message?.Trim();
             if (string.IsNullOrEmpty(trimmedMessage))
             {
-                return;
+                return null;
             }
 
             var chatRequest = currentNpc.BuildRequest(new List<ChatMessage>(history), trimmedMessage, BuildWorldContext());
@@ -144,11 +160,12 @@ namespace MastersGame.Gameplay
                 AddNpcMessage(refusal);
                 chatWindow.SetBusy(false, GetModel().StatusSummary);
                 chatWindow.FocusInput();
-                return;
+                NpcReplyReady?.Invoke(currentNpc, refusal);
+                return refusal;
             }
 
             isBusy = true;
-            generationCancellation = new CancellationTokenSource();
+            generationCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             var languageModel = GetModel();
             LogDebug($"Sending message to {currentNpc.NpcName} via {languageModel.DisplayName}: {trimmedMessage}");
             chatWindow.SetBusy(true, $"Генерация через {languageModel.DisplayName}...");
@@ -163,7 +180,7 @@ namespace MastersGame.Gameplay
 
                     if (!ChatOpen || currentNpc == null)
                     {
-                        return;
+                        return null;
                     }
 
                     var sanitizedStreamedReply = NpcConversationSupport.SanitizeNpcReply(streamedReply, chatRequest, out var streamedRelationshipDelta);
@@ -173,14 +190,15 @@ namespace MastersGame.Gameplay
                     AddHistoryMessage(new ChatMessage(ChatRole.Npc, sanitizedStreamedReply));
                     chatWindow.SetBusy(false, languageModel.StatusSummary);
                     chatWindow.FocusInput();
-                    return;
+                    NpcReplyReady?.Invoke(currentNpc, sanitizedStreamedReply);
+                    return sanitizedStreamedReply;
                 }
 
                 var reply = await languageModel.GenerateReplyAsync(chatRequest, generationCancellation.Token);
 
                 if (!ChatOpen || currentNpc == null)
                 {
-                    return;
+                    return null;
                 }
 
                 var sanitizedReply = NpcConversationSupport.SanitizeNpcReply(reply, chatRequest, out var relationshipDelta);
@@ -189,6 +207,8 @@ namespace MastersGame.Gameplay
                 AddNpcMessage(sanitizedReply);
                 chatWindow.SetBusy(false, languageModel.StatusSummary);
                 chatWindow.FocusInput();
+                NpcReplyReady?.Invoke(currentNpc, sanitizedReply);
+                return sanitizedReply;
             }
             catch (OperationCanceledException)
             {
@@ -198,6 +218,8 @@ namespace MastersGame.Gameplay
                     chatWindow.CancelStreamingNpcMessage();
                     chatWindow.SetBusy(false, "Генерация отменена.");
                 }
+
+                return null;
             }
             catch (Exception exception)
             {
@@ -206,9 +228,14 @@ namespace MastersGame.Gameplay
                 {
                     ClearPendingStreamingUpdate();
                     chatWindow.CancelStreamingNpcMessage();
-                    AddNpcMessage(NpcConversationSupport.BuildFallbackReply(chatRequest));
+                    var fallbackReply = NpcConversationSupport.BuildFallbackReply(chatRequest);
+                    AddNpcMessage(fallbackReply);
                     chatWindow.SetBusy(false, "Генерация не удалась.");
+                    NpcReplyReady?.Invoke(currentNpc, fallbackReply);
+                    return fallbackReply;
                 }
+
+                return null;
             }
             finally
             {
