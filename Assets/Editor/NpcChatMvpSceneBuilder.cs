@@ -64,7 +64,7 @@ namespace MastersGame.Editor
             var microphoneRecorder = AddComponentByName(systems, "MastersGame.Voice.MicrophoneRecorder");
             var speechToText = AddComponentByName(systems, "MastersGame.Voice.WhisperHttpSpeechToText");
             var textToSpeech = AddComponentByName(systems, "MastersGame.Voice.HttpTextToSpeechService");
-            llamaModel.Configure("http://127.0.0.1:8080", "qwen", true);
+            llamaModel.Configure("http://127.0.0.1:8080", "qwen", string.Empty, true);
             sentisModel.modelAsset = AssetDatabase.LoadAssetAtPath<ModelAsset>("Assets/Models/Qwen/model.onnx");
             sentisModel.tokenizerJson = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Models/Qwen/tokenizer.json");
 
@@ -205,7 +205,7 @@ namespace MastersGame.Editor
         private static NpcChatTarget CreateNpc()
         {
             var npc = new GameObject("NPC_Eldrik");
-            npc.transform.position = new Vector3(0f, 1f, 4f);
+            npc.transform.position = new Vector3(0f, 0.2f, 4f);
 
             var trigger = npc.AddComponent<SphereCollider>();
             trigger.radius = 2.6f;
@@ -241,7 +241,7 @@ namespace MastersGame.Editor
                 visual.transform.SetParent(npc.transform, false);
                 visual.transform.localPosition = Vector3.zero;
                 visual.transform.localRotation = Quaternion.identity;
-                visual.transform.localScale = Vector3.one;
+                visual.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 
                 foreach (var collider in visual.GetComponentsInChildren<Collider>(true))
                 {

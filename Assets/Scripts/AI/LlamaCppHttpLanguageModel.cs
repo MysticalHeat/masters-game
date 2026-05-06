@@ -13,6 +13,7 @@ namespace MastersGame.AI
         [SerializeField] private string displayName = "llama.cpp";
         [SerializeField] private bool useAsPrimaryBackend;
         [SerializeField] private string baseUrl = "http://127.0.0.1:8080";
+        [SerializeField] private string apiKey;
         [SerializeField] private string modelName = "qwen";
         [SerializeField] private int maxTokens = 128;
         [SerializeField] private float temperature = 0.3f;
@@ -22,16 +23,48 @@ namespace MastersGame.AI
 
         private string statusSummary = "llama.cpp backend отключён.";
 
+        public const string EnvBaseUrl = "MASTERS_LLM_BASE_URL";
+        public const string EnvApiKey = "MASTERS_LLM_API_KEY";
+        public const string EnvModelName = "MASTERS_LLM_MODEL";
+
         public string DisplayName => displayName;
 
         public string StatusSummary => statusSummary;
 
         public bool IsConfigured => useAsPrimaryBackend && !string.IsNullOrWhiteSpace(baseUrl) && !string.IsNullOrWhiteSpace(modelName);
 
-        public void Configure(string configuredBaseUrl, string configuredModelName, bool enableAsPrimaryBackend)
+        private void Awake()
+        {
+            LoadFromConfig();
+        }
+
+        [ContextMenu("Load from Environment")]
+        public void LoadFromConfig()
+        {
+            var envBaseUrl = MastersGame.Config.EnvConfig.Get(EnvBaseUrl);
+            if (!string.IsNullOrWhiteSpace(envBaseUrl))
+            {
+                baseUrl = envBaseUrl;
+            }
+
+            var envApiKey = MastersGame.Config.EnvConfig.Get(EnvApiKey);
+            if (!string.IsNullOrWhiteSpace(envApiKey))
+            {
+                apiKey = envApiKey;
+            }
+
+            var envModelName = MastersGame.Config.EnvConfig.Get(EnvModelName);
+            if (!string.IsNullOrWhiteSpace(envModelName))
+            {
+                modelName = envModelName;
+            }
+        }
+
+        public void Configure(string configuredBaseUrl, string configuredModelName, string configuredApiKey, bool enableAsPrimaryBackend)
         {
             baseUrl = configuredBaseUrl;
             modelName = configuredModelName;
+            apiKey = configuredApiKey;
             useAsPrimaryBackend = enableAsPrimaryBackend;
         }
 
@@ -76,6 +109,10 @@ namespace MastersGame.AI
                 ? (streamingHandler = new StreamingSseDownloadHandler(onPartialText))
                 : new DownloadHandlerBuffer();
             webRequest.SetRequestHeader("Content-Type", "application/json");
+            if (!string.IsNullOrWhiteSpace(apiKey))
+            {
+                webRequest.SetRequestHeader("Authorization", $"Bearer {apiKey}");
+            }
             webRequest.timeout = requestTimeoutSeconds;
 
             using var registration = cancellationToken.Register(() => webRequest.Abort());

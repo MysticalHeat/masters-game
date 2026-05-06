@@ -384,6 +384,7 @@ namespace MastersGame.Gameplay
         }
     }
 
+#if false
     public enum DayNightPhase
     {
         Dawn,
@@ -403,6 +404,7 @@ namespace MastersGame.Gameplay
         [SerializeField] [Min(30f)] private float fullCycleDurationSeconds = 240f;
         [SerializeField] [Range(0f, 1f)] private float startingTimeNormalized = 0.35f;
         [SerializeField] private Key toggleDayNightHotkey = Key.N;
+        [SerializeField] private bool enableDebugLogging = true;
 
         [Header("Lighting")]
         [SerializeField] private float sunAzimuth = -35f;
@@ -426,6 +428,8 @@ namespace MastersGame.Gameplay
 
         private float currentTimeNormalized;
         private bool initialized;
+        private bool loggedKeyboardUnavailable;
+        private bool loggedTextInputFocusBlocked;
 
         public event Action<DayNightCycle> StateChanged;
 
@@ -458,6 +462,7 @@ namespace MastersGame.Gameplay
 
         private void OnEnable()
         {
+            Debug.Log($"[DayNightCycle] Enabled. Auto cycle: {autoCycle}, hotkey: {toggleDayNightHotkey}, debug: {enableDebugLogging}, current time: {FormattedTime} ({PhaseDisplayName})");
             ApplyLighting();
             NotifyStateChanged();
         }
@@ -472,11 +477,31 @@ namespace MastersGame.Gameplay
                 lightingChanged = true;
             }
 
-            if (toggleDayNightHotkey != Key.None && Keyboard.current != null && !IsTextInputFocused())
+            if (toggleDayNightHotkey != Key.None && Keyboard.current == null)
             {
+                if (!loggedKeyboardUnavailable)
+                {
+                    LogDebug("Keyboard.current is null, hotkey input is unavailable.");
+                    loggedKeyboardUnavailable = true;
+                }
+            }
+            else if (toggleDayNightHotkey != Key.None && IsTextInputFocused())
+            {
+                if (!loggedTextInputFocusBlocked)
+                {
+                    LogDebug("Hotkey input is blocked because a TMP input field is focused.");
+                    loggedTextInputFocusBlocked = true;
+                }
+            }
+            else if (toggleDayNightHotkey != Key.None)
+            {
+                loggedKeyboardUnavailable = false;
+                loggedTextInputFocusBlocked = false;
+
                 var toggleKey = Keyboard.current[toggleDayNightHotkey];
                 if (toggleKey != null && toggleKey.wasPressedThisFrame)
                 {
+                    LogDebug($"Hotkey pressed. Current time: {FormattedTime} ({PhaseDisplayName})");
                     ToggleDayNight();
                     return;
                 }
@@ -516,6 +541,7 @@ namespace MastersGame.Gameplay
 
         public void ToggleDayNight()
         {
+            LogDebug($"Toggling day/night from {FormattedTime} ({PhaseDisplayName})");
             SetTimeNormalized(IsNightPhase ? 0.5f : 0f);
         }
 
@@ -576,6 +602,16 @@ namespace MastersGame.Gameplay
         private void NotifyStateChanged()
         {
             StateChanged?.Invoke(this);
+        }
+
+        private void LogDebug(string message)
+        {
+            if (!enableDebugLogging)
+            {
+                return;
+            }
+
+            Debug.Log($"[DayNightCycle] {message}");
         }
 
         private static float EvaluateDaylightFactor(float timeNormalized)
@@ -668,4 +704,5 @@ namespace MastersGame.Gameplay
             return selectedObject.GetComponentInParent<TMP_InputField>() != null;
         }
     }
+#endif
 }
