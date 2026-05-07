@@ -115,6 +115,10 @@ namespace MastersGame.AI
             @"\[\s*REL\s*:\s*(?<delta>[+-]?\d+)\s*\]",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        private static readonly Regex ThinkingBlockRegex = new Regex(
+            @"<think>.*?</think>",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
         private static readonly string[] MetaLeakTerms =
         {
             "ai",
@@ -252,33 +256,57 @@ namespace MastersGame.AI
 
         public static string SanitizeNpcReply(string text, ChatRequest request)
         {
-            return SanitizeNpcReply(text, request, out _);
+            return SanitizeNpcReply(text, request, out _, true);
         }
 
         public static string SanitizeNpcReply(string text, ChatRequest request, out int relationshipDelta)
         {
+            return SanitizeNpcReply(text, request, out relationshipDelta, true);
+        }
+
+        public static string SanitizeNpcReplyPreview(string text, ChatRequest request)
+        {
+            return SanitizeNpcReply(text, request, out _, false);
+        }
+
+        private static string SanitizeNpcReply(string text, ChatRequest request, out int relationshipDelta, bool logFallback)
+        {
             relationshipDelta = 0;
             if (string.IsNullOrWhiteSpace(text))
             {
+                LogFallback("empty response from LLM", logFallback);
                 return BuildFallbackReply(request);
             }
 
             var cleaned = StripRoleMarkers(text.Trim());
+            cleaned = StripThinkingBlocks(cleaned);
             cleaned = StripNpcNamePrefix(cleaned, request?.NpcName);
             cleaned = ExtractRelationshipDelta(cleaned, out relationshipDelta);
 
             if (ContainsMetaLeak(cleaned))
             {
+                LogFallback($"meta leak detected in \"{cleaned}\"", logFallback);
                 relationshipDelta = 0;
                 return BuildFallbackReply(request);
             }
 
             if (string.IsNullOrWhiteSpace(cleaned))
             {
+                LogFallback("response empty after sanitization", logFallback);
                 return BuildFallbackReply(request);
             }
 
             return cleaned;
+        }
+
+        private static void LogFallback(string reason, bool enabled)
+        {
+            if (!enabled)
+            {
+                return;
+            }
+
+            Debug.Log($"[NpcConversationSupport] Fallback triggered: {reason}");
         }
 
         public static string BuildFallbackReply(ChatRequest request)
@@ -554,6 +582,23 @@ namespace MastersGame.AI
             return cleaned;
         }
 
+        private static string StripThinkingBlocks(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
+
+            var cleaned = ThinkingBlockRegex.Replace(text, string.Empty);
+            var partialThinkingIndex = cleaned.LastIndexOf("<think>", StringComparison.OrdinalIgnoreCase);
+            if (partialThinkingIndex >= 0 && cleaned.IndexOf("</think>", partialThinkingIndex, StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                cleaned = cleaned.Substring(0, partialThinkingIndex);
+            }
+
+            return cleaned.Trim();
+        }
+
         private static string StripNpcNamePrefix(string text, string npcName)
         {
             if (string.IsNullOrWhiteSpace(text) || string.IsNullOrWhiteSpace(npcName))
@@ -604,17 +649,24 @@ namespace MastersGame.Voice
 
         public bool IsRecording { get; private set; }
 
-        public void BeginRecording()
+        public bool BeginRecording()
         {
             if (IsRecording || Microphone.devices.Length == 0)
             {
-                return;
+                return false;
             }
 
             microphoneDevice = Microphone.devices[0];
             recordingClip = Microphone.Start(microphoneDevice, false, maxRecordSeconds, sampleRate);
+            if (recordingClip == null)
+            {
+                microphoneDevice = null;
+                return false;
+            }
+
             recordStartTime = Time.realtimeSinceStartup;
             IsRecording = true;
+            return true;
         }
 
         public byte[] EndRecording(out float durationSeconds)

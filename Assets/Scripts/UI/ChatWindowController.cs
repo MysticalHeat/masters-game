@@ -360,6 +360,11 @@ namespace MastersGame.UI
 
         private void HandleMicrophoneClicked()
         {
+            if (enableDebugLogging)
+            {
+                Debug.Log("[ChatWindowController] Microphone button clicked.");
+            }
+
             VoiceInputRequested?.Invoke();
         }
 

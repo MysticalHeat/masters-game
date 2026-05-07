@@ -367,9 +367,9 @@ namespace MastersGame.Gameplay
                 ? currentNpc.BuildRequest(Array.Empty<ChatMessage>(), string.Empty, BuildWorldContext())
                 : new ChatRequest("NPC", string.Empty, string.Empty, Array.Empty<ChatMessage>(), string.Empty, BuildWorldContext(), 0);
 
-            var sanitized = NpcConversationSupport.SanitizeNpcReply(text, previewRequest);
+            var sanitized = NpcConversationSupport.SanitizeNpcReplyPreview(text, previewRequest);
             return string.IsNullOrWhiteSpace(sanitized)
-                ? NpcConversationSupport.BuildFallbackReply(previewRequest)
+                ? string.Empty
                 : sanitized;
         }
 

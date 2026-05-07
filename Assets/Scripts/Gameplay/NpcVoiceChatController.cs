@@ -14,6 +14,7 @@ namespace MastersGame.Gameplay
         [SerializeField] private MicrophoneRecorder microphoneRecorder;
         [SerializeField] private WhisperHttpSpeechToText speechToTextService;
         [SerializeField] private HttpTextToSpeechService textToSpeechService;
+        [SerializeField] private bool enableDebugLogging = true;
 
         private CancellationTokenSource voiceCancellation;
         private CancellationTokenSource speechCancellation;
@@ -36,6 +37,8 @@ namespace MastersGame.Gameplay
 
         private void Awake()
         {
+            ResolveReferences();
+
             if (chatWindow != null)
             {
                 chatWindow.VoiceInputRequested += ToggleVoiceInput;
@@ -67,8 +70,11 @@ namespace MastersGame.Gameplay
 
         private void ToggleVoiceInput()
         {
+            ResolveReferences();
+
             if (chatGameManager == null || !chatGameManager.ChatOpen)
             {
+                LogDebug("Mic ignored: chat is not open.");
                 return;
             }
 
@@ -78,8 +84,17 @@ namespace MastersGame.Gameplay
                 return;
             }
 
-            if (microphoneRecorder == null || speechToTextService == null || textToSpeechService == null)
+            if (microphoneRecorder == null || speechToTextService == null)
             {
+                LogDebug("Mic ignored: voice input components are not configured.");
+                chatWindow?.SetBusy(false, "Голосовой ввод не настроен.");
+                return;
+            }
+
+            if (!speechToTextService.IsConfigured)
+            {
+                LogDebug("Mic ignored: speech-to-text backend is not configured.");
+                chatWindow?.SetBusy(false, speechToTextService.StatusSummary);
                 return;
             }
 
@@ -92,7 +107,14 @@ namespace MastersGame.Gameplay
             voiceCancellation?.Cancel();
             voiceCancellation?.Dispose();
             voiceCancellation = new CancellationTokenSource();
-            microphoneRecorder.BeginRecording();
+            if (!microphoneRecorder.BeginRecording())
+            {
+                LogDebug("Mic ignored: no microphone device or recording failed.");
+                chatWindow?.SetBusy(false, "Микрофон не найден или недоступен.");
+                return;
+            }
+
+            LogDebug("Voice recording started.");
             chatWindow?.SetVoiceState(true, false, false);
         }
 
@@ -108,6 +130,7 @@ namespace MastersGame.Gameplay
             try
             {
                 audioData = microphoneRecorder.EndRecording(out _);
+                LogDebug($"Voice recording stopped. Bytes={audioData?.Length ?? 0}");
             }
             catch (Exception exception)
             {
@@ -124,10 +147,13 @@ namespace MastersGame.Gameplay
                 var transcript = await speechToTextService.TranscribeAsync(audioData, "player_voice.wav", voiceCancellation?.Token ?? CancellationToken.None);
                 if (string.IsNullOrWhiteSpace(transcript))
                 {
+                    LogDebug($"Speech-to-text returned empty transcript. Status='{speechToTextService.StatusSummary}'");
+                    chatWindow?.SetBusy(false, speechToTextService.StatusSummary);
                     chatWindow?.SetVoiceState(false, false, false);
                     return;
                 }
 
+                LogDebug($"Speech-to-text transcript: {transcript}");
                 await chatGameManager.SubmitPlayerMessageAsync(transcript, voiceCancellation?.Token ?? CancellationToken.None);
             }
             catch (OperationCanceledException)
@@ -255,6 +281,57 @@ namespace MastersGame.Gameplay
             if (audioSource.isPlaying)
             {
                 audioSource.Stop();
+            }
+        }
+
+        private void LogDebug(string message)
+        {
+            if (!enableDebugLogging)
+            {
+                return;
+            }
+
+            Debug.Log($"[NpcVoiceChatController] {message}");
+        }
+
+        private void ResolveReferences()
+        {
+            if (microphoneRecorder == null)
+            {
+                microphoneRecorder = GetComponent<MicrophoneRecorder>();
+            }
+
+            if (microphoneRecorder == null)
+            {
+                microphoneRecorder = gameObject.AddComponent<MicrophoneRecorder>();
+                LogDebug("Added missing MicrophoneRecorder at runtime.");
+            }
+
+            if (speechToTextService == null)
+            {
+                speechToTextService = GetComponent<WhisperHttpSpeechToText>();
+            }
+
+            if (speechToTextService == null)
+            {
+                speechToTextService = gameObject.AddComponent<WhisperHttpSpeechToText>();
+                LogDebug("Added missing WhisperHttpSpeechToText at runtime.");
+            }
+
+            if (textToSpeechService == null)
+            {
+                textToSpeechService = GetComponent<HttpTextToSpeechService>();
+            }
+
+            if (textToSpeechService == null)
+            {
+                textToSpeechService = gameObject.AddComponent<HttpTextToSpeechService>();
+                LogDebug("Added missing HttpTextToSpeechService at runtime.");
+            }
+
+            if (chatGameManager == null)
+            {
+                chatGameManager = GetComponent<NpcChatGameManager>();
             }
         }
     }

@@ -16,6 +16,7 @@ namespace MastersGame.AI
         public float temperature;
         public float top_p;
         public bool stream;
+        public bool reasoning_split;
     }
 
     [System.Serializable]

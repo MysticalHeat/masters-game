@@ -15,7 +15,7 @@ namespace MastersGame.AI
         [SerializeField] private string baseUrl = "http://127.0.0.1:8080";
         [SerializeField] private string apiKey;
         [SerializeField] private string modelName = "qwen";
-        [SerializeField] private int maxTokens = 128;
+        [SerializeField] private int maxTokens = 512;
         [SerializeField] private float temperature = 0.3f;
         [SerializeField] private float topP = 0.9f;
         [SerializeField] private int requestTimeoutSeconds = 60;
@@ -90,14 +90,18 @@ namespace MastersGame.AI
                     : "llama.cpp backend отключён. Включи его в инспекторе, чтобы использовать локальный HTTP сервер.";
             }
 
-            var endpoint = baseUrl.TrimEnd('/') + "/v1/chat/completions";
+            var endpoint = BuildChatCompletionsEndpoint();
+            var effectiveMaxTokens = IsMiniMaxEndpoint()
+                ? Math.Max(maxTokens, 512)
+                : maxTokens;
             var payload = new LlamaChatCompletionRequest
             {
                 model = modelName,
-                max_tokens = maxTokens,
+                max_tokens = effectiveMaxTokens,
                 temperature = temperature,
                 top_p = topP,
                 stream = stream,
+                reasoning_split = IsMiniMaxEndpoint(),
                 messages = BuildMessages(request)
             };
 
@@ -131,6 +135,7 @@ namespace MastersGame.AI
                 if (webRequest.result != UnityWebRequest.Result.Success)
                 {
                     statusSummary = BuildHttpFailureStatus(webRequest);
+                    Debug.LogWarning(BuildHttpFailureLog(endpoint, webRequest));
                     return GetUserFacingError(webRequest);
                 }
 
@@ -215,6 +220,23 @@ namespace MastersGame.AI
             return NpcConversationSupport.BuildSystemPrompt(request, forceRussianResponses);
         }
 
+        private string BuildChatCompletionsEndpoint()
+        {
+            var normalizedBaseUrl = baseUrl.TrimEnd('/');
+            if (normalizedBaseUrl.EndsWith("/v1", StringComparison.OrdinalIgnoreCase))
+            {
+                return normalizedBaseUrl + "/chat/completions";
+            }
+
+            return normalizedBaseUrl + "/v1/chat/completions";
+        }
+
+        private bool IsMiniMaxEndpoint()
+        {
+            return !string.IsNullOrWhiteSpace(baseUrl) &&
+                   baseUrl.IndexOf("minimax", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
         private static string GetUserFacingError(string message)
         {
             return message;
@@ -244,6 +266,17 @@ namespace MastersGame.AI
             }
 
             return $"llama.cpp вернул HTTP {webRequest.responseCode}.";
+        }
+
+        private static string BuildHttpFailureLog(string endpoint, UnityWebRequest webRequest)
+        {
+            var body = webRequest.downloadHandler?.text;
+            if (!string.IsNullOrWhiteSpace(body))
+            {
+                return $"[LlamaCppHttpLanguageModel] HTTP request failed: POST {endpoint} -> {webRequest.responseCode}. Body: {body}";
+            }
+
+            return $"[LlamaCppHttpLanguageModel] HTTP request failed: POST {endpoint} -> {webRequest.responseCode}. Error: {webRequest.error}";
         }
 
         private static Task SendWebRequestAsync(UnityWebRequest webRequest, CancellationToken cancellationToken)
